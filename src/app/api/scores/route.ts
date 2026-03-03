@@ -1,0 +1,74 @@
+import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
+import { scores, players } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { scoreSubmissionSchema } from "@/lib/validations";
+import { calculateHandicapDiff } from "@/lib/handicap";
+import type { Course, Tee } from "@/lib/constants";
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const parsed = scoreSubmissionSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid data", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { roundDate, course, tee, players: playerEntries } = parsed.data;
+
+    const inserted: number[] = [];
+
+    for (const entry of playerEntries) {
+      const hdcp = calculateHandicapDiff(
+        entry.score,
+        course as Course,
+        tee as Tee
+      );
+
+      const result = await db
+        .insert(scores)
+        .values({
+          playerId: entry.playerId,
+          roundDate,
+          course,
+          tee,
+          score: entry.score,
+          handicapDiff: hdcp,
+        })
+        .returning({ id: scores.id });
+
+      inserted.push(result[0].id);
+    }
+
+    // Revalidate affected pages
+    revalidatePath("/");
+    revalidatePath("/statistics");
+    revalidatePath("/players");
+
+    // Revalidate individual player pages
+    for (const entry of playerEntries) {
+      const player = await db
+        .select({ slug: players.slug })
+        .from(players)
+        .where(eq(players.id, entry.playerId))
+        .limit(1);
+
+      if (player.length > 0) {
+        revalidatePath(`/players/${player[0].slug}`);
+      }
+    }
+
+    return NextResponse.json({ success: true, inserted: inserted.length });
+  } catch (error) {
+    console.error("Score submission error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
