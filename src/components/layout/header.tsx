@@ -27,11 +27,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-white">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          {/* To use your logo: save it as /public/logo-icon.png and replace the div below with:
-              <img src="/logo-icon.png" alt="OSL" className="h-9 w-9 object-contain" /> */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-            OSL
-          </div>
+          <img src="/logo-icon.png" alt="OSL" className="h-9 w-9 object-contain" />
           <span className="hidden text-lg font-light text-foreground sm:inline">
             Ottawa Super League
           </span>
