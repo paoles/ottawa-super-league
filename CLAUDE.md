@@ -28,7 +28,7 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Handicap differential stored per score record (computed at insert time, never changes)
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
 - ISR with 5-min revalidation on read pages
-- Score submission: POST /api/scores → DB insert → revalidate paths
+- Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths
 - Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
 - Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
 - Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
@@ -38,7 +38,8 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 ## Admin
 
 - Single-admin auth via bcrypt password hash + HMAC-signed session cookie
-- Env vars: `ADMIN_PASSWORD_HASH` (bcrypt hash), `ADMIN_SESSION_SECRET` (HMAC key)
+- Env vars: `ADMIN_PASSWORD_HASH` (bcrypt hash), `ADMIN_SESSION_SECRET` (32-byte hex random secret)
+- Generate session secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 - **In `.env.local`**: escape `$` as `\$` in the hash value (Next.js interpolates `$` otherwise)
 - **On Vercel**: paste the raw hash with plain `$` signs — no escaping needed
 - Generate hash: `npx tsx scripts/hash-password.ts "yourpassword"` — prints both raw and escaped versions
@@ -49,6 +50,16 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
 - Player delete blocked if player has scores (409 Conflict)
 - Score edit recalculates handicap differential automatically
+
+## Security
+
+- Session token format: `{uuid}:{issuedAt}.{hmac}` — expiration validated server-side in both middleware and auth.ts
+- Login rate limiting: 5 failed attempts per IP → 15-min lockout (in-memory; resets per serverless instance)
+- CSV export (`/api/export`) requires valid admin session
+- Score submission validates all player IDs exist in DB before any inserts
+- Security headers on all responses: HSTS, X-Content-Type-Options, X-Frame-Options: DENY, Referrer-Policy, Permissions-Policy
+- CSRF: covered by SameSite=lax cookies (cross-site POST/PUT/DELETE requests do not include the cookie)
+- console.error logs only error.message, never full error objects
 
 ## Course Data
 

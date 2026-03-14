@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 const COOKIE_NAME = "admin_session";
+const SESSION_MAX_AGE_MS = 60 * 60 * 24 * 7 * 1000; // 7 days
 
 async function hmacSign(value: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -22,12 +23,25 @@ async function verifySession(request: NextRequest): Promise<boolean> {
   const cookie = request.cookies.get(COOKIE_NAME);
   if (!cookie?.value) return false;
 
-  const parts = cookie.value.split(".");
-  if (parts.length !== 2) return false;
+  const value = cookie.value;
+  const lastDot = value.lastIndexOf(".");
+  if (lastDot === -1) return false;
 
-  const [token, signature] = parts;
+  const token = value.slice(0, lastDot);
+  const signature = value.slice(lastDot + 1);
+
+  // Verify HMAC
   const expected = await hmacSign(token, secret);
-  return expected === signature;
+  if (expected !== signature) return false;
+
+  // Validate expiration: token is "{uuid}:{issuedAt}"
+  const colonIdx = token.lastIndexOf(":");
+  if (colonIdx === -1) return false;
+  const issuedAt = parseInt(token.slice(colonIdx + 1), 10);
+  if (isNaN(issuedAt)) return false;
+  if (Date.now() - issuedAt > SESSION_MAX_AGE_MS) return false;
+
+  return true;
 }
 
 export async function middleware(request: NextRequest) {

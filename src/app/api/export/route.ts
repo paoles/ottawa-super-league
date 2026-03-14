@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
+import { isAuthenticated } from "@/lib/auth";
 import { getLeaderboardData, getScoresForExport } from "@/lib/stats";
 import { generateLeaderboardCsv, generateScoresCsv } from "@/lib/csv";
 
 export async function GET(request: Request) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
 
