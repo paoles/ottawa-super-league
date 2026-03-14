@@ -7,11 +7,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import type { LeaderboardRow } from "@/types";
 
 interface LeaderboardTableProps {
   data: LeaderboardRow[];
+}
+
+function winPctColor(pct: number): string {
+  if (pct >= 60) return "text-green-600 font-semibold";
+  if (pct >= 30) return "text-orange-500 font-semibold";
+  return "text-red-500 font-semibold";
+}
+
+function rankColor(rank: number | null): string {
+  if (rank === 1) return "text-yellow-500 font-bold";
+  if (rank === 2) return "text-slate-400 font-bold";
+  if (rank === 3) return "text-amber-600 font-bold";
+  return "text-muted-foreground";
 }
 
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
@@ -19,61 +31,63 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
     <div className="overflow-x-auto rounded-lg border">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50">
-            <TableHead className="w-12 text-center">Rank</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead className="text-center">GP</TableHead>
-            <TableHead className="text-center">Avg</TableHead>
-            <TableHead className="text-center">Hdcp</TableHead>
-            <TableHead className="text-center">Best</TableHead>
-            <TableHead className="text-center">Worst</TableHead>
-            <TableHead className="text-center">Med</TableHead>
-            <TableHead className="text-center">W</TableHead>
-            <TableHead className="text-center">L</TableHead>
-            <TableHead className="text-center">T</TableHead>
-            <TableHead className="text-center">Win%</TableHead>
+          <TableRow className="bg-primary hover:bg-primary">
+            <TableHead className="w-10 text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">#</TableHead>
+            <TableHead className="text-xs font-semibold uppercase tracking-wide text-primary-foreground">Player</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">GP</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Stroke Avg</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Hdcp</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Best</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Worst</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Wins</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Win %</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((row) => (
             <TableRow key={row.playerId} className="hover:bg-muted/30">
-              <TableCell className="text-center font-medium">
-                {row.rank ?? "—"}
+              <TableCell className="text-center">
+                <span className={rankColor(row.rank)}>
+                  {row.rank ?? "—"}
+                </span>
               </TableCell>
               <TableCell>
-                <Link
-                  href={`/players/${row.slug}`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {row.name}
-                </Link>
-                {row.isSocial && (
-                  <Badge variant="secondary" className="ml-2 text-xs">
-                    Social
-                  </Badge>
-                )}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Link
+                    href={`/players/${row.slug}`}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    {row.name}
+                  </Link>
+                  {row.isSocial && (
+                    <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800">
+                      Social
+                    </span>
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-center">{row.gp}</TableCell>
               <TableCell className="text-center">
                 {row.gp > 0 ? row.strokeAvg.toFixed(2) : "—"}
               </TableCell>
               <TableCell className="text-center">
-                {row.gp > 0 ? row.hdcpAvg.toFixed(2) : "—"}
+                {row.gp > 0 ? row.hdcpAvg.toFixed(1) : "—"}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center font-medium text-green-600">
                 {row.gp > 0 ? row.bestRound : "—"}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center font-medium text-red-500">
                 {row.gp > 0 ? row.worstRound : "—"}
               </TableCell>
-              <TableCell className="text-center">
-                {row.gp > 0 ? row.median : "—"}
+              <TableCell className="text-center text-muted-foreground">
+                {row.wins}&nbsp;·&nbsp;{row.losses}&nbsp;·&nbsp;{row.ties}
               </TableCell>
-              <TableCell className="text-center">{row.wins}</TableCell>
-              <TableCell className="text-center">{row.losses}</TableCell>
-              <TableCell className="text-center">{row.ties}</TableCell>
               <TableCell className="text-center">
-                {row.gp > 0 ? `${row.winPct.toFixed(1)}%` : "—"}
+                {row.gp > 0 ? (
+                  <span className={winPctColor(row.winPct)}>
+                    {row.winPct.toFixed(0)}%
+                  </span>
+                ) : "—"}
               </TableCell>
             </TableRow>
           ))}

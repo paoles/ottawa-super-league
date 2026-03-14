@@ -8,7 +8,7 @@ Mobile-first web app for the Ottawa Super League golf league at The Meadows Golf
 - Drizzle ORM + libSQL (local SQLite dev / Turso cloud production)
 - Recharts for charts, react-hook-form + zod for forms
 - bcryptjs for password hashing
-- Roboto font, green (#186732) primary branding
+- Roboto + Dancing Script fonts, green (#186732) primary branding
 
 ## Commands
 
@@ -81,3 +81,14 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - CSS variables use oklch color space for the shadcn/ui theme
 - Primary green: oklch(0.4 0.12 145) ≈ #186732
 - Set cookies in Route Handlers via `response.cookies.set()` on the `NextResponse` object, NOT via `cookies()` from `next/headers`
+
+## Homepage Design
+
+- Hero: `logo-full.png` centered on light bg (`bg-muted/30`), tight padding (`py-4 sm:py-6`)
+- Buttons: "Input Score" (→ /scores) + "Book a Tee Time" (→ external tee-on.com URL, target _blank)
+- Sponsors: "Proudly sponsored by:" + 5 placeholder tiles (3+2 grid); swap `<div>` for `<img>` when assets ready; store images in `/public/sponsors/`
+- Leaderboard heading: Dancing Script font via `style={{ fontFamily: "var(--font-dancing-script)" }}`
+- Nav: Home · Statistics · Input Score · About Us ▼ (dropdown → Players)
+- Rank medal colors: #1 gold (`text-yellow-500`), #2 silver (`text-slate-400`), #3 bronze (`text-amber-600`)
+- Leaderboard table: dark green header, Best=green, Worst=red, Win% color-coded (≥60% green, ≥30% orange, <30% red), W·L·T combined column
+- Mobile cards: compact (`px-3 py-2`), medal badge ring colors match rank, gap-1.5 between cards

@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { LeaderboardRow } from "@/types";
 
 interface LeaderboardCardProps {
   row: LeaderboardRow;
+}
+
+function rankBadgeClass(rank: number | null): string {
+  if (rank === 1) return "bg-yellow-100 text-yellow-600 border border-yellow-400";
+  if (rank === 2) return "bg-slate-100 text-slate-500 border border-slate-400";
+  if (rank === 3) return "bg-amber-100 text-amber-700 border border-amber-500";
+  return "bg-primary/10 text-primary";
 }
 
 export function LeaderboardCard({ row }: LeaderboardCardProps) {
@@ -13,45 +19,43 @@ export function LeaderboardCard({ row }: LeaderboardCardProps) {
   return (
     <Link href={`/players/${row.slug}`}>
       <Card className="transition-shadow hover:shadow-md">
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+        <CardContent className="px-3 py-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${rankBadgeClass(row.rank)}`}>
                 {row.rank ?? "—"}
               </div>
               <div>
-                <p className="font-medium">{row.name}</p>
+                <p className="text-sm font-medium leading-tight">{row.name}</p>
                 {row.isSocial && (
-                  <Badge variant="secondary" className="mt-0.5 text-xs">
-                    Social
-                  </Badge>
+                  <span className="text-xs text-amber-700">Social</span>
                 )}
               </div>
             </div>
             <div className="text-right">
-              <p className="text-lg font-light">{row.strokeAvg.toFixed(1)}</p>
-              <p className="text-xs text-muted-foreground">Stroke Avg</p>
+              <p className="text-base font-light">{row.strokeAvg.toFixed(1)}</p>
+              <p className="text-xs text-muted-foreground">Avg</p>
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-sm">
+          <div className="mt-1.5 grid grid-cols-4 gap-1 text-center">
             <div>
-              <p className="font-medium">{row.gp}</p>
-              <p className="text-xs text-muted-foreground">GP</p>
+              <p className="text-xs font-medium">{row.gp}</p>
+              <p className="text-[10px] text-muted-foreground">GP</p>
             </div>
             <div>
-              <p className="font-medium">{row.bestRound}</p>
-              <p className="text-xs text-muted-foreground">Best</p>
+              <p className="text-xs font-medium text-green-600">{row.bestRound}</p>
+              <p className="text-[10px] text-muted-foreground">Best</p>
             </div>
             <div>
-              <p className="font-medium">
+              <p className="text-xs font-medium">
                 {row.wins}-{row.losses}-{row.ties}
               </p>
-              <p className="text-xs text-muted-foreground">W-L-T</p>
+              <p className="text-[10px] text-muted-foreground">W-L-T</p>
             </div>
             <div>
-              <p className="font-medium">{row.winPct.toFixed(0)}%</p>
-              <p className="text-xs text-muted-foreground">Win%</p>
+              <p className="text-xs font-medium">{row.winPct.toFixed(0)}%</p>
+              <p className="text-[10px] text-muted-foreground">Win%</p>
             </div>
           </div>
         </CardContent>
