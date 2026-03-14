@@ -59,6 +59,7 @@ export interface ScoreTrendPoint {
   date: string;
   playerName: string;
   score: number;
+  course: string;
 }
 
 export interface CourseBreakdown {

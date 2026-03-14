@@ -294,6 +294,7 @@ export async function getScoreTrends(): Promise<ScoreTrendPoint[]> {
     .select({
       playerId: scores.playerId,
       roundDate: scores.roundDate,
+      course: scores.course,
       score: scores.score,
     })
     .from(scores)
@@ -306,6 +307,7 @@ export async function getScoreTrends(): Promise<ScoreTrendPoint[]> {
     date: s.roundDate,
     playerName: playerMap.get(s.playerId) || "Unknown",
     score: s.score,
+    course: s.course,
   }));
 }
 

@@ -82,6 +82,20 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Primary green: oklch(0.4 0.12 145) ≈ #186732
 - Set cookies in Route Handlers via `response.cookies.set()` on the `NextResponse` object, NOT via `cookies()` from `next/headers`
 
+## Statistics Page Design
+
+- Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
+- `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
+- Course filter pills: `All | East | North | West | South` — active pill uses course color or primary green for All
+- Course colors: East=#1b6b2f, North=#5ab035, West=#f05a1e, South=#2563eb
+- Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
+- Player profiles CTA (compact single-row card, `py-2.5`) appears after summary cards, links to `/players`
+- Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
+- Course-by-Course Breakdown: 4 tiles (2x2 → 4-col), shows avg score + best round + total rounds; visible on "All" only
+- Score Distribution: histogram, computed client-side from filtered trend data
+- Score Trends: line chart, filtered by selected course; title updates to "Score Trends — East" etc.
+- `ScoreTrendPoint` type includes `course: string` to enable client-side filtering
+
 ## Homepage Design
 
 - Hero: `logo-full.png` centered on light bg (`bg-muted/30`), tight padding (`py-4 sm:py-6`)
