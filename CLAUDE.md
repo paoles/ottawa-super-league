@@ -87,15 +87,16 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
 - `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
 - Course filter pills: `All | East | North | West | South` — active pill uses course color or primary green for All
-- Course colors: East=#1b6b2f, North=#5ab035, West=#f05a1e, South=#2563eb
+- Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
 - Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
 - Player profiles CTA (compact single-row card, `py-2.5`) appears after summary cards, links to `/players`
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
-- Course-by-Course Breakdown: 4 tiles (2x2 → 4-col), shows avg score + best round + total rounds; visible on "All" only
-- Score Distribution: histogram, computed client-side from filtered trend data
+- Course-by-Course Breakdown: 4 tiles (2x2 → 4-col), sorted easiest→hardest by avg score; shows avg score + best round + total rounds; visible on "All" only
+- Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Score Trends Y-axis
 - Score Trends: responsive line chart, filtered by selected course; title updates to "Score Trends — East" etc.
-  - Mobile (< 640px): single bold green "League Avg" line only + subtitle caption; no legend
-  - Desktop: individual player lines (thin, 35% opacity) as background context + bold League Avg on top + compact legend
+  - All viewports: individual player lines (thin, mobile 55% / desktop 35% opacity) as background context + bold League Avg on top
+  - Mobile: subtitle caption shown; no legend. Desktop: compact legend shown
+  - Linear regression trendline on League Avg: dashed green line (strokeDasharray="6 3", 50% opacity)
   - Chart height: `h-[280px] sm:h-[400px]`; x-axis tick density adapts (~5 mobile, ~10 desktop)
   - `isMobile` detected via `useEffect` + `resize` listener
 - `ScoreTrendPoint` type includes `course: string` to enable client-side filtering

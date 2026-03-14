@@ -65,6 +65,27 @@ export function ScoreTrendsChart({ data }: ScoreTrendsChartProps) {
     return row;
   });
 
+  // Linear regression trendline on League Avg
+  const leaguePoints = chartData
+    .map((r, i) => ({ x: i, y: r["League Avg"] as number | undefined }))
+    .filter((p): p is { x: number; y: number } => p.y !== undefined);
+  const n = leaguePoints.length;
+  const trendLine: (number | undefined)[] = new Array(chartData.length).fill(undefined);
+  if (n >= 2) {
+    const sumX = leaguePoints.reduce((s, p) => s + p.x, 0);
+    const sumY = leaguePoints.reduce((s, p) => s + p.y, 0);
+    const sumXY = leaguePoints.reduce((s, p) => s + p.x * p.y, 0);
+    const sumX2 = leaguePoints.reduce((s, p) => s + p.x * p.x, 0);
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    chartData.forEach((_, i) => {
+      trendLine[i] = Math.round((slope * i + intercept) * 10) / 10;
+    });
+    chartData.forEach((row, i) => {
+      row["Trend"] = trendLine[i]!;
+    });
+  }
+
   const tickInterval = isMobile
     ? Math.max(0, Math.ceil(dates.length / 5) - 1)
     : Math.max(0, Math.ceil(dates.length / 10) - 1);
@@ -103,21 +124,34 @@ export function ScoreTrendsChart({ data }: ScoreTrendsChartProps) {
               strokeDasharray="3 3"
               label={{ value: "Par", fontSize: 11, fill: "#aaa", position: "insideTopRight" }}
             />
-            {/* Individual player lines — desktop only, thin + faded background context */}
-            {!isMobile &&
-              playerNames.map((name, i) => (
-                <Line
-                  key={name}
-                  type="monotone"
-                  dataKey={name}
-                  stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
-                  strokeWidth={1}
-                  strokeOpacity={0.35}
-                  dot={false}
-                  connectNulls
-                  legendType="none"
-                />
-              ))}
+            {/* Individual player lines — thin + faded background context */}
+            {playerNames.map((name, i) => (
+              <Line
+                key={name}
+                type="monotone"
+                dataKey={name}
+                stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
+                strokeWidth={1}
+                strokeOpacity={isMobile ? 0.55 : 0.35}
+                dot={false}
+                connectNulls
+                legendType="none"
+              />
+            ))}
+            {/* Trendline — dashed, sits behind League Avg */}
+            {n >= 2 && (
+              <Line
+                name="Trend"
+                type="linear"
+                dataKey="Trend"
+                stroke="#186732"
+                strokeWidth={1.5}
+                strokeOpacity={0.5}
+                strokeDasharray="6 3"
+                dot={false}
+                legendType="none"
+              />
+            )}
             {/* League average — always shown, bold */}
             <Line
               name="League Avg"

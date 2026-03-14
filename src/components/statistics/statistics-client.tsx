@@ -15,10 +15,10 @@ interface StatisticsClientProps {
 }
 
 const COURSE_COLORS: Record<string, string> = {
-  East: "#1b6b2f",
-  North: "#5ab035",
-  West: "#f05a1e",
-  South: "#2563eb",
+  North: "#10b981",
+  South: "#f43f5e",
+  East: "#3b82f6",
+  West: "#f59e0b",
 };
 
 const SCORE_BUCKETS = [
@@ -232,7 +232,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {courseBreakdowns.map((d) => (
+              {[...courseBreakdowns].sort((a, b) => a.avgScore - b.avgScore).map((d) => (
                 <div
                   key={d.course}
                   className="rounded-lg border p-3 text-center"
