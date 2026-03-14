@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { verifyPassword, createSessionCookie } from "@/lib/auth";
+import { verifyPassword, generateSessionValue, COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -14,8 +14,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    await createSessionCookie();
-    return NextResponse.json({ success: true });
+    const sessionValue = await generateSessionValue();
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(COOKIE_NAME, sessionValue, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: SESSION_MAX_AGE,
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
