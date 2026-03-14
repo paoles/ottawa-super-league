@@ -28,7 +28,7 @@ export default async function HomePage() {
             className="mx-auto w-full object-contain"
           />
         </div>
-        <div className="mt-4 flex justify-center gap-3">
+        <div className="mt-2 flex justify-center gap-3">
           <Button asChild size="lg">
             <Link href="/scores">Input Score</Link>
           </Button>
@@ -40,6 +40,34 @@ export default async function HomePage() {
             >
               Book a Tee Time
             </a>
+          </Button>
+        </div>
+      </section>
+
+      {/* Leaderboard */}
+      <section className="mx-auto max-w-5xl px-4 py-8">
+        <h2
+          className="mb-6 text-center text-4xl font-bold text-primary"
+          style={{ fontFamily: "var(--font-dancing-script)" }}
+        >
+          Current Leaderboard
+        </h2>
+
+        {/* Desktop table */}
+        <div className="hidden md:block">
+          <LeaderboardTable data={leaderboard} />
+        </div>
+
+        {/* Mobile cards */}
+        <div className="flex flex-col gap-1.5 md:hidden">
+          {leaderboard.map((row) => (
+            <LeaderboardCard key={row.playerId} row={row} />
+          ))}
+        </div>
+
+        <div className="mt-6 text-center">
+          <Button asChild variant="default" size="lg">
+            <Link href="/statistics">More Stats</Link>
           </Button>
         </div>
       </section>
@@ -68,34 +96,6 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Leaderboard */}
-      <section className="mx-auto max-w-5xl px-4 py-8">
-        <h2
-          className="mb-6 text-center text-4xl text-primary"
-          style={{ fontFamily: "var(--font-dancing-script)" }}
-        >
-          Current Leaderboard
-        </h2>
-
-        {/* Desktop table */}
-        <div className="hidden md:block">
-          <LeaderboardTable data={leaderboard} />
-        </div>
-
-        {/* Mobile cards */}
-        <div className="flex flex-col gap-1.5 md:hidden">
-          {leaderboard.map((row) => (
-            <LeaderboardCard key={row.playerId} row={row} />
-          ))}
-        </div>
-
-        <div className="mt-6 text-center">
-          <Button asChild variant="default" size="lg">
-            <Link href="/statistics">More Stats</Link>
-          </Button>
         </div>
       </section>
     </div>
