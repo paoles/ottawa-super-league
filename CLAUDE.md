@@ -96,6 +96,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 ## Statistics Page Design
 
 - Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
+- Heading: "Statistics" in Dancing Script + green decorative divider; icon-only `CsvExportButton` (`iconOnly` prop) right-aligned using flex row with left `w-8` spacer to keep title centered
 - `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
 - Course filter pills: `All | East | North | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
@@ -131,11 +132,22 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Homepage Design
 
-- Hero: `logo-full.png` centered on light bg (`bg-muted/30`), tight padding (`py-4 sm:py-6`)
-- Buttons: "Input Score" (→ /scores) + "Book a Tee Time" (→ external tee-on.com URL, target _blank)
+- Hero: `logo-full.png` centered on white bg (`bg-white`), padding `py-6 sm:py-10`; "Summer Tour 2025" pill badge below logo (`bg-primary/10 text-primary rounded-full`)
+- CTA buttons (stacked full-width on mobile, inline on sm+): "Input Score" (primary, → /scores) + "Book a Tee Time" (outline, → external tee-on.com URL, target _blank)
+- Quick Links band: dark green bg (`bg-[#186732]`), 3-col grid of icon cards (Trophy→Leaderboard, BarChart2→Statistics, Users→Players); `bg-white/10` cards with `border-white/20`, hover `bg-white/20`; subtitle text `hidden sm:block`
 - Sponsors: "Proudly sponsored by:" + 5 placeholder tiles (3+2 grid); swap `<div>` for `<img>` when assets ready; store images in `/public/sponsors/`
-- Leaderboard heading: Dancing Script font via `style={{ fontFamily: "var(--font-dancing-script)" }}`
-- Nav: Home · Statistics · Input Score · About Us ▼ (dropdown → Players)
+- No leaderboard on homepage — leaderboard lives at `/leaderboard`
+- Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → Players) + "Input Score" green pill on right
+- Desktop nav: all items right-aligned; Input Score is a `rounded-full bg-primary` pill; Admin shield icon after pill
+- Mobile nav: Input Score pill visible in header bar; hamburger opens sheet with Home · Leaderboard · Statistics · Players · Input Score, then Admin (with shield icon) at bottom separated by a border-t divider
 - Rank medal colors: #1 gold (`text-yellow-500`), #2 silver (`text-slate-400`), #3 bronze (`text-amber-600`)
-- Leaderboard table: dark green header, Best=green, Worst=red, Win% color-coded (≥60% green, ≥30% orange, <30% red), W·L·T combined column
-- Mobile cards: `px-3 py-3` padding, `gap-2` between cards, `Card py-0` to suppress default spacing; top row: rank circle (top-3 gold/silver/bronze) · name · Social badge inline · Hdcp + avg right-aligned; stat row: `{GP} GP · Best {green} · Worst {red} · W-L-T · Win%{color}`; Win% color-coded (≥60% green, ≥30% orange, <30% red)
+- Leaderboard table: dark green header, Best=green, Worst=red, W/L/T header (gray values), Win% column: color-coded number + slim bar underneath (`h-1 w-12 rounded-full`, `gap-px`); bar color matches text (green/orange/red)
+- Mobile cards: `px-3 py-3` padding, `gap-2` between cards, `Card py-0` + `shadow-md hover:shadow-lg`; top row: rank circle (top-3 gold/silver/bronze) · name · Social badge inline · Hdcp + avg right-aligned; stat row (`text-[13px]`): left=GP · Best {green number} · Worst {red number}, right=W-L-T (gray) · Win% (color-coded ≥60% green, ≥30% orange, <30% red)
+
+## Leaderboard Page Design
+
+- Route: `/leaderboard`
+- Heading: "Leaderboard" in Dancing Script font (`style={{ fontFamily: "var(--font-dancing-script)" }}`)
+- Decorative divider below heading: 3-part flex row — gradient line (transparent→primary/60) · solid pill (`h-1 w-12 rounded-full bg-primary`) · gradient line (primary/60→transparent) — same pattern reused on Statistics and Players pages
+- Desktop: `LeaderboardTable`; Mobile: `LeaderboardCard` list
+- ISR 5-min revalidation (`export const revalidate = 300`)

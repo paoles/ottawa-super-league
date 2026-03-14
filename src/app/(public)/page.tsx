@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
-import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
-import { getLeaderboardData } from "@/lib/stats";
+import { Trophy, BarChart2, Users } from "lucide-react";
 
 export const revalidate = 300;
 
@@ -11,28 +9,42 @@ const SPONSORS = [
   { name: "Pinpoint Solutions" },
   { name: "Freedom Convoy 2022" },
   { name: "The Business Inn & Suites" },
-  { name: "The J\u2014\u2014er Quotes" },
+  { name: "The J——er Quotes" },
+];
+
+const QUICK_LINKS = [
+  { href: "/leaderboard", icon: Trophy, label: "Leaderboard", desc: "Season standings" },
+  { href: "/statistics", icon: BarChart2, label: "Statistics", desc: "Scores & trends" },
+  { href: "/players", icon: Users, label: "Players", desc: "Player profiles" },
 ];
 
 export default async function HomePage() {
-  const leaderboard = await getLeaderboardData();
-
   return (
     <div>
       {/* Hero */}
-      <section className="bg-muted/30 px-4 py-4 text-center sm:py-6">
-        <div className="mx-auto max-w-xs sm:max-w-sm">
+      <section className="bg-white px-4 py-6 text-center sm:py-10">
+        <div className="mx-auto max-w-[260px] sm:max-w-[300px]">
           <img
             src="/logo-full.png"
             alt="Ottawa Super League"
             className="mx-auto w-full object-contain"
           />
         </div>
-        <div className="mt-2 flex justify-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-2 mb-5">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-primary">
+            Summer Tour 2025
+          </span>
+        </div>
+        <div className="mx-auto flex max-w-xs flex-col gap-2.5 sm:max-w-none sm:flex-row sm:justify-center">
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/scores">Input Score</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="w-full sm:w-auto border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+          >
             <a
               href="https://www.tee-on.com/PubGolf/servlet/com.teeon.teesheet.servlets.golfersection.ComboLanding?CourseCode=TMCC&FromCourseWebsite=true"
               target="_blank"
@@ -44,36 +56,23 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Leaderboard */}
-      <section className="mx-auto max-w-5xl px-4 py-8">
-        <h2
-          className="mb-6 text-center text-4xl font-bold text-primary"
-          style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
-        >
-          Current Leaderboard
-        </h2>
-
-        {/* Desktop table */}
-        <div className="hidden md:block">
-          <LeaderboardTable data={leaderboard} />
-        </div>
-
-        {/* Mobile cards */}
-        <div className="flex flex-col gap-2 md:hidden">
-          {leaderboard.map((row) => (
-            <LeaderboardCard key={row.playerId} row={row} />
+      {/* Quick Links */}
+      <section className="bg-[#186732] px-4 py-6">
+        <div className="mx-auto grid max-w-sm grid-cols-3 gap-3">
+          {QUICK_LINKS.map(({ href, icon: Icon, label, desc }) => (
+            <Link key={href} href={href} className="group">
+              <div className="flex flex-col items-center rounded-xl border border-white/20 bg-white/10 px-2 py-4 text-center text-white transition-colors group-hover:bg-white/20">
+                <Icon className="mb-2 h-6 w-6" />
+                <div className="text-sm font-semibold">{label}</div>
+                <div className="mt-0.5 hidden text-[11px] leading-tight text-white/70 sm:block">{desc}</div>
+              </div>
+            </Link>
           ))}
-        </div>
-
-        <div className="mt-6 text-center">
-          <Button asChild variant="default" size="lg">
-            <Link href="/statistics">More Stats</Link>
-          </Button>
         </div>
       </section>
 
       {/* Sponsors */}
-      <section className="border-y bg-white px-4 py-8 text-center">
+      <section className="border-t bg-white px-4 py-8 text-center">
         <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Proudly sponsored by:
         </p>

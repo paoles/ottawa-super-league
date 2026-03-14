@@ -13,11 +13,20 @@ interface LeaderboardTableProps {
   data: LeaderboardRow[];
 }
 
-function winPctColor(pct: number): string {
-  if (pct >= 60) return "text-green-600 font-semibold";
-  if (pct >= 30) return "text-orange-500 font-semibold";
-  return "text-red-500 font-semibold";
+function WinPctBar({ pct }: { pct: number }) {
+  const textColor = pct >= 60 ? "text-green-600" : pct >= 30 ? "text-orange-500" : "text-red-500";
+  const barColor = pct >= 60 ? "bg-green-600" : pct >= 30 ? "bg-orange-500" : "bg-red-500";
+
+  return (
+    <div className="flex flex-col items-center gap-px">
+      <span className={`text-sm font-semibold ${textColor}`}>{pct.toFixed(0)}%</span>
+      <div className="h-1 w-12 rounded-full bg-muted">
+        <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
 }
+
 
 function rankColor(rank: number | null): string {
   if (rank === 1) return "text-yellow-500 font-bold";
@@ -39,7 +48,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
             <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Hdcp</TableHead>
             <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Best</TableHead>
             <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Worst</TableHead>
-            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Wins</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">W/L/T</TableHead>
             <TableHead className="text-center text-xs font-semibold uppercase tracking-wide text-primary-foreground">Win %</TableHead>
           </TableRow>
         </TableHeader>
@@ -83,11 +92,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 {row.wins}&nbsp;·&nbsp;{row.losses}&nbsp;·&nbsp;{row.ties}
               </TableCell>
               <TableCell className="text-center">
-                {row.gp > 0 ? (
-                  <span className={winPctColor(row.winPct)}>
-                    {row.winPct.toFixed(0)}%
-                  </span>
-                ) : "—"}
+                {row.gp > 0 ? <WinPctBar pct={row.winPct} /> : "—"}
               </TableCell>
             </TableRow>
           ))}

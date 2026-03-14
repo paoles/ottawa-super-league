@@ -24,7 +24,7 @@ export function LeaderboardCard({ row }: LeaderboardCardProps) {
 
   return (
     <Link href={`/players/${row.slug}`}>
-      <Card className="py-0">
+      <Card className="py-0 shadow-md transition-shadow hover:shadow-lg">
         <CardContent className="px-3 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -44,9 +44,21 @@ export function LeaderboardCard({ row }: LeaderboardCardProps) {
             </div>
           </div>
 
-          <p className="mt-1.5 text-base text-muted-foreground">
-            {row.gp} GP · <span className="text-green-600">Best {row.bestRound}</span> · <span className="text-red-500">Worst {row.worstRound}</span> · {row.wins}-{row.losses}-{row.ties} · <span className={winPctClass(row.winPct)}>{row.winPct.toFixed(0)}%</span>
-          </p>
+          <div className="mt-1.5 flex items-center justify-between text-[13px] text-muted-foreground">
+            <span>
+              {row.gp} GP
+              {" "}·{" "}Best <span className="font-medium text-green-600">{row.bestRound}</span>
+              {" "}·{" "}Worst <span className="font-medium text-red-500">{row.worstRound}</span>
+            </span>
+            <span>
+              <span>{row.wins}</span>
+              <span>-</span>
+              <span>{row.losses}</span>
+              <span>-</span>
+              <span>{row.ties}</span>
+              {" "}·{" "}<span className={`font-medium ${winPctClass(row.winPct)}`}>{row.winPct.toFixed(0)}%</span>
+            </span>
+          </div>
         </CardContent>
       </Card>
     </Link>
