@@ -175,6 +175,59 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
         </CardContent>
       </Card>
 
+      {/* Score Trends */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-lg font-light">
+            Score Trends{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : " Over Time"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScoreTrendsChart data={filteredTrends} />
+        </CardContent>
+      </Card>
+
+      {/* Course tiles - only for All */}
+      {selectedCourse === "All" && (
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-lg font-light">Course Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {[...courseBreakdowns].sort((a, b) => a.avgScore - b.avgScore).map((d) => (
+                <div
+                  key={d.course}
+                  className="rounded-lg border p-3 text-center"
+                  style={{ borderColor: COURSE_COLORS[d.course] + "40" }}
+                >
+                  <p className="text-sm font-semibold" style={{ color: COURSE_COLORS[d.course] }}>
+                    {d.course}
+                  </p>
+                  <p className="mt-1 text-lg font-light">{d.avgScore.toFixed(1)}</p>
+                  <p className="text-xs text-muted-foreground">avg score</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Best: <span className="text-green-600 font-medium">{d.bestRound}</span>
+                    {" \u00b7 "}
+                    {d.totalRounds} rounds
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Score Distribution */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-lg font-light">Score Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DistributionChart data={distributionBuckets} />
+        </CardContent>
+      </Card>
+
       {/* Top 5 Best Rounds */}
       <Card className="mb-8">
         <CardHeader>
@@ -224,58 +277,10 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
         </CardContent>
       </Card>
 
-      {/* Course tiles - only for All */}
-      {selectedCourse === "All" && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg font-light">Course-by-Course Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[...courseBreakdowns].sort((a, b) => a.avgScore - b.avgScore).map((d) => (
-                <div
-                  key={d.course}
-                  className="rounded-lg border p-3 text-center"
-                  style={{ borderColor: COURSE_COLORS[d.course] + "40" }}
-                >
-                  <p className="text-sm font-semibold" style={{ color: COURSE_COLORS[d.course] }}>
-                    {d.course}
-                  </p>
-                  <p className="mt-1 text-lg font-light">{d.avgScore.toFixed(1)}</p>
-                  <p className="text-xs text-muted-foreground">avg score</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Best: <span className="text-green-600 font-medium">{d.bestRound}</span>
-                    {" \u00b7 "}
-                    {d.totalRounds} rounds
-                  </p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Score Distribution */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg font-light">Score Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DistributionChart data={distributionBuckets} />
-        </CardContent>
-      </Card>
-
-      {/* Score Trends */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg font-light">
-            Score Trends{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : " Over Time"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ScoreTrendsChart data={filteredTrends} />
-        </CardContent>
-      </Card>
+      {/* Footer note */}
+      <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-center text-sm text-foreground">
+        Use the <span className="font-medium">course filters at the top</span> to narrow all results by course.
+      </div>
     </div>
   );
 }

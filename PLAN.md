@@ -12,7 +12,7 @@
 - [x] Score input: 5-step mobile-first wizard form (per-player tee, score suggestions, +/- adjust buttons)
 - [x] Statistics page: summary cards + charts (trends responsive, course breakdown, distribution)
 - [x] Players directory: grid with player cards
-- [x] Player profiles: stats, chart, course breakdown, round history
+- [x] Player profiles: course filter pills, summary cards (color-coded Best/Worst), score history chart (per-course bg lines + trendline), course breakdown tiles, score distribution, sortable round history, orange chevron back button
 - [x] CSV export API (scores + leaderboard)
 - [x] ISR with 5-min revalidation
 
@@ -43,6 +43,6 @@
 
 ### Phase 5: Enhancements
 - [ ] Head-to-head player comparison
-- [ ] Handicap trend charts on player profiles
+- [x] Handicap trend charts on player profiles (score history trendline added)
 - [ ] Mobile PWA support
 - [ ] Dark mode

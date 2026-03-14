@@ -10,13 +10,13 @@
 - [ ] Schedule / upcoming rounds page
 - [ ] Player photo uploads (file upload vs URL)
 - [ ] Head-to-head player comparison tool
-- [ ] Handicap trend charts on player profiles
 - [ ] Rate limiting on admin login
 - [ ] Mobile PWA support (offline, install prompt)
 - [ ] Dark mode toggle
 - [ ] Push notifications for new scores
 
 ## Done
+- [x] Player profile redesign: course filter pills, color-coded stats, course breakdown tiles, score distribution, sortable round history, back button, score history trendline
 - [x] Score Trends chart: responsive (mobile = league avg only, desktop = individual lines + league avg)
 - [x] Core app: leaderboard, score input, statistics, player profiles
 - [x] Database schema + seed data (Summer Tour 2025)

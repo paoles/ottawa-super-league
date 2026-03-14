@@ -109,7 +109,7 @@ export function StepPlayers({
               Add Player ({selected.length}/4)
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-full p-0" align="start">
+          <PopoverContent className="p-0" style={{ width: "var(--radix-popover-trigger-width)" }} align="start">
             <Command>
               <CommandInput placeholder="Search players..." />
               <CommandList>
