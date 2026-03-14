@@ -13,51 +13,40 @@ function rankBadgeClass(rank: number | null): string {
   return "bg-primary/10 text-primary";
 }
 
+function winPctClass(pct: number): string {
+  if (pct >= 60) return "text-green-600";
+  if (pct >= 30) return "text-orange-500";
+  return "text-red-500";
+}
+
 export function LeaderboardCard({ row }: LeaderboardCardProps) {
   if (row.gp === 0) return null;
 
   return (
     <Link href={`/players/${row.slug}`}>
-      <Card className="transition-shadow hover:shadow-md">
-        <CardContent className="px-3 py-2">
+      <Card className="py-0">
+        <CardContent className="px-3 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${rankBadgeClass(row.rank)}`}>
+              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${rankBadgeClass(row.rank)}`}>
                 {row.rank ?? "—"}
               </div>
-              <div>
-                <p className="text-sm font-medium leading-tight">{row.name}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-base font-medium leading-tight">{row.name}</p>
                 {row.isSocial && (
-                  <span className="text-xs text-amber-700">Social</span>
+                  <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800">Social</span>
                 )}
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-base font-light">{row.strokeAvg.toFixed(1)}</p>
-              <p className="text-xs text-muted-foreground">Avg</p>
+            <div className="flex items-baseline gap-2 text-right">
+              <span className="text-sm text-muted-foreground">Hdcp {row.hdcpAvg.toFixed(1)}</span>
+              <span className="text-base font-semibold">{row.strokeAvg.toFixed(1)}<span className="ml-0.5 text-xs font-normal text-muted-foreground">avg</span></span>
             </div>
           </div>
 
-          <div className="mt-1.5 grid grid-cols-4 gap-1 text-center">
-            <div>
-              <p className="text-xs font-medium">{row.gp}</p>
-              <p className="text-[10px] text-muted-foreground">GP</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-green-600">{row.bestRound}</p>
-              <p className="text-[10px] text-muted-foreground">Best</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium">
-                {row.wins}-{row.losses}-{row.ties}
-              </p>
-              <p className="text-[10px] text-muted-foreground">W-L-T</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium">{row.winPct.toFixed(0)}%</p>
-              <p className="text-[10px] text-muted-foreground">Win%</p>
-            </div>
-          </div>
+          <p className="mt-1.5 text-base text-muted-foreground">
+            {row.gp} GP · <span className="text-green-600">Best {row.bestRound}</span> · <span className="text-red-500">Worst {row.worstRound}</span> · {row.wins}-{row.losses}-{row.ties} · <span className={winPctClass(row.winPct)}>{row.winPct.toFixed(0)}%</span>
+          </p>
         </CardContent>
       </Card>
     </Link>

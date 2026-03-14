@@ -24,3 +24,4 @@
 - [x] Route groups (public vs admin layouts)
 - [x] CSV export API
 - [x] Production build passing
+- [x] Mobile leaderboard cards redesigned (two-row, Best/Worst/Win% color-coded, Hdcp on top row, Social badge inline)

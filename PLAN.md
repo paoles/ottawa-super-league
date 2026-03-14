@@ -8,6 +8,7 @@
 - [x] Schema: players table, scores table
 - [x] Seed data: Summer Tour 2025 (16 players, 98 scores)
 - [x] Landing page with hero banner + leaderboard (table desktop, cards mobile); sponsors below leaderboard; bold leaderboard heading
+- [x] Mobile leaderboard cards: two-row design — name+Social+Hdcp+avg top row; GP·Best·Worst·W-L-T·Win% stat row; color-coded Best(green)/Worst(red)/Win%
 - [x] Score input: 5-step mobile-first wizard form (per-player tee, score suggestions, +/- adjust buttons)
 - [x] Statistics page: summary cards + charts (trends, course breakdown, distribution)
 - [x] Players directory: grid with player cards

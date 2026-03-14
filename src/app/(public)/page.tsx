@@ -48,7 +48,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-5xl px-4 py-8">
         <h2
           className="mb-6 text-center text-4xl font-bold text-primary"
-          style={{ fontFamily: "var(--font-dancing-script)" }}
+          style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
         >
           Current Leaderboard
         </h2>
@@ -59,7 +59,7 @@ export default async function HomePage() {
         </div>
 
         {/* Mobile cards */}
-        <div className="flex flex-col gap-1.5 md:hidden">
+        <div className="flex flex-col gap-2 md:hidden">
           {leaderboard.map((row) => (
             <LeaderboardCard key={row.playerId} row={row} />
           ))}

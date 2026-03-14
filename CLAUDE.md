@@ -91,4 +91,4 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Nav: Home · Statistics · Input Score · About Us ▼ (dropdown → Players)
 - Rank medal colors: #1 gold (`text-yellow-500`), #2 silver (`text-slate-400`), #3 bronze (`text-amber-600`)
 - Leaderboard table: dark green header, Best=green, Worst=red, Win% color-coded (≥60% green, ≥30% orange, <30% red), W·L·T combined column
-- Mobile cards: compact (`px-3 py-2`), medal badge ring colors match rank, gap-1.5 between cards
+- Mobile cards: `px-3 py-3` padding, `gap-2` between cards, `Card py-0` to suppress default spacing; top row: rank circle (top-3 gold/silver/bronze) · name · Social badge inline · Hdcp + avg right-aligned; stat row: `{GP} GP · Best {green} · Worst {red} · W-L-T · Win%{color}`; Win% color-coded (≥60% green, ≥30% orange, <30% red)
