@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { roundDate, course, tee, players: playerEntries } = parsed.data;
+    const { roundDate, course, players: playerEntries } = parsed.data;
 
     const inserted: number[] = [];
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       const hdcp = calculateHandicapDiff(
         entry.score,
         course as Course,
-        tee as Tee
+        entry.tee as Tee
       );
 
       const result = await db
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
           playerId: entry.playerId,
           roundDate,
           course,
-          tee,
+          tee: entry.tee,
           score: entry.score,
           handicapDiff: hdcp,
         })

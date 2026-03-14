@@ -29,6 +29,10 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
 - ISR with 5-min revalidation on read pages
 - Score submission: POST /api/scores → DB insert → revalidate paths
+- Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
+- Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
+- Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
+- Course tile order: North/West top row, South/East bottom row
 - Route groups: public pages in `src/app/(public)/` (Header/Footer layout), admin in `src/app/admin/` (AdminNav layout)
 
 ## Admin

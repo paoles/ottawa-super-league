@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Command,
   CommandEmpty,
@@ -14,14 +13,25 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { X, UserPlus } from "lucide-react";
 import type { PlayerOption } from "@/types";
+import type { Tee } from "@/lib/constants";
 
 interface StepPlayersProps {
   players: PlayerOption[];
   selected: PlayerOption[];
-  onChange: (players: PlayerOption[]) => void;
+  tees: Map<number, Tee>;
+  onPlayerAdd: (player: PlayerOption) => void;
+  onPlayerRemove: (playerId: number) => void;
+  onTeeChange: (playerId: number, tee: Tee) => void;
 }
 
-export function StepPlayers({ players, selected, onChange }: StepPlayersProps) {
+export function StepPlayers({
+  players,
+  selected,
+  tees,
+  onPlayerAdd,
+  onPlayerRemove,
+  onTeeChange,
+}: StepPlayersProps) {
   const [open, setOpen] = useState(false);
 
   const availablePlayers = players.filter(
@@ -30,39 +40,64 @@ export function StepPlayers({ players, selected, onChange }: StepPlayersProps) {
 
   function addPlayer(player: PlayerOption) {
     if (selected.length >= 4) return;
-    onChange([...selected, player]);
+    onPlayerAdd(player);
     setOpen(false);
-  }
-
-  function removePlayer(id: number) {
-    onChange(selected.filter((p) => p.id !== id));
   }
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-medium">Who played?</h3>
+      <h3 className="mb-1 text-lg font-medium">Who played?</h3>
       <p className="mb-4 text-sm text-muted-foreground">
-        Add 1-4 players from your group
+        Add 1–4 players and set each tee box
       </p>
 
       {/* Selected players */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        {selected.map((player) => (
-          <Badge
-            key={player.id}
-            variant="secondary"
-            className="flex items-center gap-1 py-2 pl-3 pr-2 text-sm"
-          >
-            {player.name}
-            <button
-              type="button"
-              onClick={() => removePlayer(player.id)}
-              className="ml-1 rounded-full hover:bg-foreground/10"
+      <div className="mb-4 space-y-2">
+        {selected.map((player) => {
+          const tee = tees.get(player.id) ?? "White";
+          return (
+            <div
+              key={player.id}
+              className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2"
             >
-              <X className="h-3 w-3" />
-            </button>
-          </Badge>
-        ))}
+              <span className="font-medium text-sm">{player.name}</span>
+              <div className="flex items-center gap-2">
+                {/* Tee toggle */}
+                <div className="flex rounded-md border overflow-hidden text-xs font-medium">
+                  <button
+                    type="button"
+                    onClick={() => onTeeChange(player.id, "White")}
+                    className={`px-3 py-1.5 transition-colors ${
+                      tee === "White"
+                        ? "bg-gray-700 text-white"
+                        : "bg-white text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    White
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onTeeChange(player.id, "Blue")}
+                    className={`px-3 py-1.5 transition-colors ${
+                      tee === "Blue"
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-blue-600 hover:bg-blue-50"
+                    }`}
+                  >
+                    Blue
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onPlayerRemove(player.id)}
+                  className="rounded-full p-1 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Add player combobox */}

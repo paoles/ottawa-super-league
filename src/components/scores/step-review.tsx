@@ -10,17 +10,20 @@ interface StepReviewProps {
 }
 
 export function StepReview({ formData }: StepReviewProps) {
-  const { roundDate, course, tee, selectedPlayers, scores } = formData;
+  const { roundDate, course, tees, selectedPlayers, scores } = formData;
 
   // Calculate W/L/T preview
   const playerScores = selectedPlayers
-    .map((p) => ({
-      ...p,
-      score: scores.get(p.id) ?? 0,
-      hdcp: scores.get(p.id)
-        ? calculateHandicapDiff(scores.get(p.id)!, course!, tee!)
-        : 0,
-    }))
+    .map((p) => {
+      const tee = tees.get(p.id) ?? "White";
+      const score = scores.get(p.id) ?? 0;
+      return {
+        ...p,
+        score,
+        tee,
+        hdcp: score ? calculateHandicapDiff(score, course!, tee) : 0,
+      };
+    })
     .sort((a, b) => a.score - b.score);
 
   const minScore = Math.min(...playerScores.map((p) => p.score));
@@ -45,10 +48,6 @@ export function StepReview({ formData }: StepReviewProps) {
           <span className="text-muted-foreground">Course</span>
           <span className="font-medium">{course}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Tee Box</span>
-          <span className="font-medium">{tee}</span>
-        </div>
       </div>
 
       <Separator className="my-4" />
@@ -64,7 +63,7 @@ export function StepReview({ formData }: StepReviewProps) {
               <div>
                 <p className="font-medium">{player.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  Hdcp: {player.hdcp.toFixed(1)}
+                  {player.tee} · Hdcp: {player.hdcp.toFixed(1)}
                 </p>
               </div>
               <div className="flex items-center gap-2">

@@ -77,4 +77,5 @@ export interface DistributionBucket {
 export interface PlayerOption {
   id: number;
   name: string;
+  avgScore: number | null;
 }

@@ -4,12 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { COURSES, TEES, type Course, type Tee } from "@/lib/constants";
-import { calculateHandicapDiff } from "@/lib/handicap";
-import { ChevronLeft, Check, Loader2 } from "lucide-react";
+import { type Course, type Tee } from "@/lib/constants";
+import { Check, ChevronLeft, Loader2 } from "lucide-react";
 import { StepDate } from "./step-date";
 import { StepCourse } from "./step-course";
-import { StepTee } from "./step-tee";
 import { StepPlayers } from "./step-players";
 import { StepScores } from "./step-scores";
 import { StepReview } from "./step-review";
@@ -22,13 +20,13 @@ interface ScoreFormProps {
 export interface FormData {
   roundDate: string;
   course: Course | null;
-  tee: Tee | null;
+  tees: Map<number, Tee>;
   selectedPlayers: PlayerOption[];
   scores: Map<number, number>;
 }
 
-const TOTAL_STEPS = 6;
-const STEP_LABELS = ["Date", "Course", "Tee", "Players", "Scores", "Review"];
+const TOTAL_STEPS = 5;
+const STEP_LABELS = ["Date", "Course", "Players", "Scores", "Review"];
 
 export function ScoreForm({ players }: ScoreFormProps) {
   const [step, setStep] = useState(1);
@@ -38,7 +36,7 @@ export function ScoreForm({ players }: ScoreFormProps) {
   const [formData, setFormData] = useState<FormData>({
     roundDate: new Date().toISOString().slice(0, 10),
     course: null,
-    tee: null,
+    tees: new Map(),
     selectedPlayers: [],
     scores: new Map(),
   });
@@ -50,10 +48,11 @@ export function ScoreForm({ players }: ScoreFormProps) {
       case 2:
         return !!formData.course;
       case 3:
-        return !!formData.tee;
+        return (
+          formData.selectedPlayers.length >= 1 &&
+          formData.selectedPlayers.every((p) => formData.tees.has(p.id))
+        );
       case 4:
-        return formData.selectedPlayers.length >= 1;
-      case 5:
         return formData.selectedPlayers.every(
           (p) => formData.scores.has(p.id) && formData.scores.get(p.id)! > 0
         );
@@ -63,17 +62,17 @@ export function ScoreForm({ players }: ScoreFormProps) {
   }
 
   async function handleSubmit() {
-    if (!formData.course || !formData.tee) return;
+    if (!formData.course) return;
 
     setSubmitting(true);
     try {
       const payload = {
         roundDate: formData.roundDate,
         course: formData.course,
-        tee: formData.tee,
         players: formData.selectedPlayers.map((p) => ({
           playerId: p.id,
           score: formData.scores.get(p.id)!,
+          tee: formData.tees.get(p.id)!,
         })),
       };
 
@@ -101,7 +100,7 @@ export function ScoreForm({ players }: ScoreFormProps) {
     setFormData({
       roundDate: new Date().toISOString().slice(0, 10),
       course: null,
-      tee: null,
+      tees: new Map(),
       selectedPlayers: [],
       scores: new Map(),
     });
@@ -172,32 +171,56 @@ export function ScoreForm({ players }: ScoreFormProps) {
             />
           )}
           {step === 3 && (
-            <StepTee
-              value={formData.tee}
-              onChange={(tee) => setFormData((d) => ({ ...d, tee }))}
-            />
-          )}
-          {step === 4 && (
             <StepPlayers
               players={players}
               selected={formData.selectedPlayers}
-              onChange={(selectedPlayers) =>
-                setFormData((d) => ({ ...d, selectedPlayers }))
+              tees={formData.tees}
+              onPlayerAdd={(player) =>
+                setFormData((d) => {
+                  const tees = new Map(d.tees);
+                  tees.set(player.id, "White");
+                  return {
+                    ...d,
+                    tees,
+                    selectedPlayers: [...d.selectedPlayers, player],
+                  };
+                })
+              }
+              onPlayerRemove={(playerId) =>
+                setFormData((d) => {
+                  const tees = new Map(d.tees);
+                  tees.delete(playerId);
+                  const scores = new Map(d.scores);
+                  scores.delete(playerId);
+                  return {
+                    ...d,
+                    tees,
+                    scores,
+                    selectedPlayers: d.selectedPlayers.filter(
+                      (p) => p.id !== playerId
+                    ),
+                  };
+                })
+              }
+              onTeeChange={(playerId, tee) =>
+                setFormData((d) => {
+                  const tees = new Map(d.tees);
+                  tees.set(playerId, tee);
+                  return { ...d, tees };
+                })
               }
             />
           )}
-          {step === 5 && (
+          {step === 4 && (
             <StepScores
               players={formData.selectedPlayers}
               scores={formData.scores}
+              tees={formData.tees}
               course={formData.course!}
-              tee={formData.tee!}
               onChange={(scores) => setFormData((d) => ({ ...d, scores }))}
             />
           )}
-          {step === 6 && (
-            <StepReview formData={formData} />
-          )}
+          {step === 5 && <StepReview formData={formData} />}
         </CardContent>
       </Card>
 
