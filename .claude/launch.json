@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["node_modules/next/dist/bin/next", "dev"],
       "port": 3000
+    },
+    {
+      "name": "db:studio",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/drizzle-kit/bin.cjs", "studio"],
+      "port": 4983
     }
   ]
 }

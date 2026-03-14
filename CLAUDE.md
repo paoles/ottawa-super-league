@@ -28,6 +28,17 @@ npm run db:studio    # Open Drizzle Studio
 - ISR with 5-min revalidation on read pages
 - Score submission: POST /api/scores → DB insert → revalidate paths
 
+## Admin
+
+- Single-admin auth via bcrypt password hash + HMAC-signed session cookie
+- Env vars: `ADMIN_PASSWORD_HASH` (bcrypt hash), `ADMIN_SESSION_SECRET` (HMAC key)
+- Generate hash: `npx tsx scripts/hash-password.ts "yourpassword"`
+- Middleware protects `/admin/*` and `/api/admin/*` (except `/admin/login`)
+- Admin routes: `/admin` (dashboard), `/admin/players` (CRUD), `/admin/scores` (edit/delete)
+- Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
+- Player delete blocked if player has scores (409 Conflict)
+- Score edit recalculates handicap differential automatically
+
 ## Course Data
 
 4 nine-hole courses at The Meadows, all par 36. Tee boxes: White, Blue.
