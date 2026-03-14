@@ -10,7 +10,7 @@
 - [x] Landing page with hero banner + leaderboard (table desktop, cards mobile); sponsors below leaderboard; bold leaderboard heading
 - [x] Mobile leaderboard cards: two-row design — name+Social+Hdcp+avg top row; GP·Best·Worst·W-L-T·Win% stat row; color-coded Best(green)/Worst(red)/Win%
 - [x] Score input: 5-step mobile-first wizard form (per-player tee, score suggestions, +/- adjust buttons)
-- [x] Statistics page: summary cards + charts (trends, course breakdown, distribution)
+- [x] Statistics page: summary cards + charts (trends responsive, course breakdown, distribution)
 - [x] Players directory: grid with player cards
 - [x] Player profiles: stats, chart, course breakdown, round history
 - [x] CSV export API (scores + leaderboard)

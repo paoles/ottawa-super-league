@@ -17,6 +17,7 @@
 - [ ] Push notifications for new scores
 
 ## Done
+- [x] Score Trends chart: responsive (mobile = league avg only, desktop = individual lines + league avg)
 - [x] Core app: leaderboard, score input, statistics, player profiles
 - [x] Database schema + seed data (Summer Tour 2025)
 - [x] Admin auth (bcrypt + HMAC session cookie)

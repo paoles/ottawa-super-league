@@ -94,12 +94,12 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       </div>
 
       {/* Course filter pills */}
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 flex gap-1.5">
         {["All", ...COURSES].map((course) => (
           <button
             key={course}
             onClick={() => setSelectedCourse(course)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`flex-1 rounded-full py-1.5 text-sm font-medium transition-colors text-center ${
               selectedCourse === course
                 ? "text-white"
                 : "border border-border bg-background text-muted-foreground hover:bg-muted"
@@ -160,19 +160,17 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       )}
 
       {/* Players CTA */}
-      <Card className="mb-8 border-[#186732]/30 bg-[#186732]/5">
-        <CardContent className="flex flex-row items-center justify-between gap-3 px-4 py-2.5">
-          <div>
+      <Card className="mb-8 border-[#186732]/30 bg-[#186732]/5 py-0">
+        <CardContent className="flex flex-row items-center justify-between gap-2 px-3 py-2.5">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">Looking for individual stats?</p>
-            <p className="text-xs text-muted-foreground">
-              View player profiles, course breakdowns &amp; round history.
-            </p>
+            <p className="text-xs text-muted-foreground">Player summary &amp; round history.</p>
           </div>
           <Link
             href="/players"
-            className="shrink-0 rounded-md bg-[#186732] px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-[#186732]/90"
+            className="shrink-0 rounded-md bg-[#186732] px-4 py-2 text-center text-xs font-medium text-white hover:bg-[#186732]/90 leading-snug"
           >
-            View Player Profiles &rarr;
+            Player Profiles →
           </Link>
         </CardContent>
       </Card>

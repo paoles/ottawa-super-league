@@ -93,7 +93,11 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
 - Course-by-Course Breakdown: 4 tiles (2x2 → 4-col), shows avg score + best round + total rounds; visible on "All" only
 - Score Distribution: histogram, computed client-side from filtered trend data
-- Score Trends: line chart, filtered by selected course; title updates to "Score Trends — East" etc.
+- Score Trends: responsive line chart, filtered by selected course; title updates to "Score Trends — East" etc.
+  - Mobile (< 640px): single bold green "League Avg" line only + subtitle caption; no legend
+  - Desktop: individual player lines (thin, 35% opacity) as background context + bold League Avg on top + compact legend
+  - Chart height: `h-[280px] sm:h-[400px]`; x-axis tick density adapts (~5 mobile, ~10 desktop)
+  - `isMobile` detected via `useEffect` + `resize` listener
 - `ScoreTrendPoint` type includes `course: string` to enable client-side filtering
 
 ## Homepage Design
