@@ -7,6 +7,7 @@ Mobile-first web app for the Ottawa Super League golf league at The Meadows Golf
 - Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui
 - Drizzle ORM + libSQL (local SQLite dev / Turso cloud production)
 - Recharts for charts, react-hook-form + zod for forms
+- bcryptjs for password hashing
 - Roboto font, green (#186732) primary branding
 
 ## Commands
@@ -18,6 +19,7 @@ npm run db:generate  # Generate Drizzle migrations
 npm run db:push      # Push schema to database
 npm run db:seed      # Seed database with Summer Tour 2025 data
 npm run db:studio    # Open Drizzle Studio
+npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.local
 ```
 
 ## Architecture
@@ -27,13 +29,18 @@ npm run db:studio    # Open Drizzle Studio
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
 - ISR with 5-min revalidation on read pages
 - Score submission: POST /api/scores → DB insert → revalidate paths
+- Route groups: public pages in `src/app/(public)/` (Header/Footer layout), admin in `src/app/admin/` (AdminNav layout)
 
 ## Admin
 
 - Single-admin auth via bcrypt password hash + HMAC-signed session cookie
 - Env vars: `ADMIN_PASSWORD_HASH` (bcrypt hash), `ADMIN_SESSION_SECRET` (HMAC key)
-- Generate hash: `npx tsx scripts/hash-password.ts "yourpassword"`
-- Middleware protects `/admin/*` and `/api/admin/*` (except `/admin/login`)
+- **In `.env.local`**: escape `$` as `\$` in the hash value (Next.js interpolates `$` otherwise)
+- **On Vercel**: paste the raw hash with plain `$` signs — no escaping needed
+- Generate hash: `npx tsx scripts/hash-password.ts "yourpassword"` — prints both raw and escaped versions
+- Middleware (`src/middleware.ts`) protects `/admin/*` and `/api/admin/*` (except `/admin/login`)
+- Admin layout (`src/app/admin/layout.tsx`) is a client component — hides nav on `/admin/login`
+- Session cookie set directly on `NextResponse` in the login route handler (not via `cookies()` from next/headers)
 - Admin routes: `/admin` (dashboard), `/admin/players` (CRUD), `/admin/scores` (edit/delete)
 - Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
 - Player delete blocked if player has scores (409 Conflict)
@@ -69,3 +76,4 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Use `z.number()` with `valueAsNumber: true` in forms (not `z.coerce.number()`)
 - CSS variables use oklch color space for the shadcn/ui theme
 - Primary green: oklch(0.4 0.12 145) ≈ #186732
+- Set cookies in Route Handlers via `response.cookies.set()` on the `NextResponse` object, NOT via `cookies()` from `next/headers`

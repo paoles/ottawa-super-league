@@ -2,7 +2,7 @@
 
 ## Completed
 
-### Phase 1: Core App (Done)
+### Phase 1: Core App
 - [x] Project setup: Next.js 16, TypeScript, Tailwind CSS v4, shadcn/ui
 - [x] Database: Drizzle ORM + libSQL (SQLite dev / Turso production)
 - [x] Schema: players table, scores table
@@ -15,23 +15,24 @@
 - [x] CSV export API (scores + leaderboard)
 - [x] ISR with 5-min revalidation
 
-### Phase 2: Admin System (Done)
+### Phase 2: Admin System
 - [x] Single-admin auth (bcrypt + HMAC session cookie)
 - [x] Login page at `/admin/login`
 - [x] Route protection via Next.js middleware
 - [x] Admin dashboard with player/score counts
-- [x] Player CRUD: create, edit, delete (with score protection)
+- [x] Player CRUD: create, edit, delete (blocked if player has scores)
 - [x] Score management: edit (with handicap recalc), delete
 - [x] Route groups: `(public)` with Header/Footer, `admin` with AdminNav
 - [x] Shield icon admin link in public header
-
-## Upcoming
+- [x] Cookie fix: set directly on `NextResponse` for reliable browser delivery
 
 ### Phase 3: Deployment
-- [ ] Set up Turso cloud database
-- [ ] Deploy to Vercel
-- [ ] Configure production env vars
+- [x] GitHub: `github.com/paoles/ottawa-super-league`
+- [x] Vercel: deployed and auto-deploying on push to master
+- [ ] Turso cloud database (currently using Vercel's bundled SQLite or local)
 - [ ] DNS: OttawaSuperLeague.VIP
+
+## Upcoming
 
 ### Phase 4: Season Features
 - [ ] Season management (archive past seasons, start new)
@@ -41,6 +42,6 @@
 
 ### Phase 5: Enhancements
 - [ ] Head-to-head player comparison
-- [ ] Handicap trend charts
+- [ ] Handicap trend charts on player profiles
 - [ ] Mobile PWA support
 - [ ] Dark mode
