@@ -113,7 +113,7 @@ export async function getLeaderboardData(): Promise<LeaderboardRow[]> {
   rows.sort((a, b) => {
     if (a.gp === 0 && b.gp === 0) return 0;
     if (a.gp === 0) return 1;
-    if (b.gp === 0) return 1;
+    if (b.gp === 0) return -1;
 
     const aRanked = a.gp >= MIN_GAMES_FOR_RANK;
     const bRanked = b.gp >= MIN_GAMES_FOR_RANK;

@@ -47,6 +47,7 @@ export async function PUT(
 
     // Revalidate affected pages
     revalidatePath("/");
+    revalidatePath("/leaderboard");
     revalidatePath("/statistics");
     revalidatePath("/players");
 
@@ -87,6 +88,7 @@ export async function DELETE(
     }
 
     revalidatePath("/");
+    revalidatePath("/leaderboard");
     revalidatePath("/statistics");
     revalidatePath("/players");
 

@@ -64,6 +64,7 @@ export async function POST(request: Request) {
 
     // Revalidate affected pages
     revalidatePath("/");
+    revalidatePath("/leaderboard");
     revalidatePath("/statistics");
     revalidatePath("/players");
 
