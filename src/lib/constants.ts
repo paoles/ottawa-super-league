@@ -1,4 +1,4 @@
-export const COURSES = ["East", "North", "West", "South"] as const;
+export const COURSES = ["North", "East", "West", "South"] as const;
 export type Course = (typeof COURSES)[number];
 
 export const TEES = ["White", "Blue"] as const;
