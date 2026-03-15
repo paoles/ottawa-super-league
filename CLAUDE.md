@@ -141,6 +141,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Server page (`/players/[slug]`) fetches `getPlayerProfile()` + `getPlayerHistory()`, passes to `PlayerProfileClient`
 - `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state
 - Back button: orange chevron (`border-2 border-orange-400`, `rounded-2xl`, `h-16 w-9`) inline with avatar; uses `router.back()` with fallback to `/players`
+- Avatar: `h-16 w-16` rounded-full with `ring-2 ring-primary/20`; shows `profile.photoUrl` via `<Image>` (`object-cover object-top`) when available, falls back to green initials
 - Course filter pills: `All | East | North | West | South` — same style as statistics page
 - Summary cards (3-col mobile / 6-col desktop): Avg · Hdcp · Best (green) · Worst (red) · Win% · W-L-T — all recompute from `filteredHistory` when course is selected
 - Section order: Score History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table

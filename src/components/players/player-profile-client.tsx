@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayerHistoryChart } from "./player-history-chart";
@@ -122,8 +123,18 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
-          {initials}
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xl font-bold text-primary ring-2 ring-primary/20">
+          {profile.photoUrl ? (
+            <Image
+              src={profile.photoUrl}
+              alt={profile.name}
+              width={64}
+              height={64}
+              className="h-full w-full object-cover object-top"
+            />
+          ) : (
+            initials
+          )}
         </div>
         <div>
           <div className="flex flex-wrap items-center gap-2">
