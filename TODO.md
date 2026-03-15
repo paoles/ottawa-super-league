@@ -8,7 +8,6 @@
 ## Backlog
 - [ ] Season management (archive/new season)
 - [ ] Schedule / upcoming rounds page
-- [ ] Player photo uploads (file upload vs URL)
 - [ ] Head-to-head player comparison tool
 - [ ] Rate limiting on admin login
 - [ ] Mobile PWA support (offline, install prompt)
@@ -27,6 +26,7 @@
 - [x] CSV export API
 - [x] Production build passing
 - [x] Players directory redesign: portrait profile tiles, alphabetical sort, Social badge top-right, stats strip (GP/Avg/Hdcp/Rank)
+- [x] Player profile photos: 12/16 players have photos in /public/players/; URLs in DB via seed + admin form
 - [x] About Us dropdown + placeholder pages (History, Course, Rules, Contact Us) with Dancing Script heading + divider
 - [x] Mobile sidebar: collapsible About Us accordion, Input Score pill with mx-4 whitespace, Admin pinned to bottom
 - [x] Mobile leaderboard cards redesigned (two-row, Best/Worst/Win% color-coded, Hdcp on top row, Social badge inline)

@@ -22,25 +22,26 @@ function slugify(name: string): string {
 interface SeedPlayer {
   name: string;
   isSocial: boolean;
+  photoUrl?: string;
 }
 
 const SEED_PLAYERS: SeedPlayer[] = [
-  { name: "Blair Watson", isSocial: false },
-  { name: "Kevin Slack", isSocial: false },
-  { name: "Jared Maltais", isSocial: false },
-  { name: "Gavin Bradley", isSocial: false },
-  { name: "Nico Paoletti", isSocial: false },
-  { name: "Ryan Woolcock", isSocial: false },
-  { name: "Peter Carniglia", isSocial: false },
-  { name: "Ben Silverman", isSocial: false },
-  { name: "Daniel Perry", isSocial: false },
+  { name: "Blair Watson", isSocial: false, photoUrl: "/players/blair-watson.jpg" },
+  { name: "Kevin Slack", isSocial: false, photoUrl: "/players/kevin-slack.jpg" },
+  { name: "Jared Maltais", isSocial: false, photoUrl: "/players/jared-maltais.jpg" },
+  { name: "Gavin Bradley", isSocial: false, photoUrl: "/players/gavin-bradley.jpg" },
+  { name: "Nico Paoletti", isSocial: false, photoUrl: "/players/nico-paoletti.JPG" },
+  { name: "Ryan Woolcock", isSocial: false, photoUrl: "/players/ryan-woolcock.jpg" },
+  { name: "Peter Carniglia", isSocial: false, photoUrl: "/players/peter-carniglia.jpg" },
+  { name: "Ben Silverman", isSocial: false, photoUrl: "/players/ben-silverman.jpg" },
+  { name: "Daniel Perry", isSocial: false, photoUrl: "/players/daniel-perry.jpg" },
   { name: "Dalton Manley", isSocial: true },
-  { name: "Justin VBS", isSocial: true },
-  { name: "Andrei Ghita", isSocial: true },
+  { name: "Justin VBS", isSocial: true, photoUrl: "/players/justin-vbs.jpg" },
+  { name: "Andrei Ghita", isSocial: true, photoUrl: "/players/andrei-ghita.jpg" },
   { name: "Donovan Gifford", isSocial: true },
   { name: "Davis Sawyer", isSocial: true },
   { name: "Sam Anderson", isSocial: true },
-  { name: "Riley McNamara", isSocial: true },
+  { name: "Riley McNamara", isSocial: true, photoUrl: "/players/riley-mcnamara.jpg" },
 ];
 
 interface SeedScore {
@@ -231,6 +232,7 @@ async function seed() {
         name: p.name,
         slug: slugify(p.name),
         isSocial: p.isSocial,
+        photoUrl: p.photoUrl ?? null,
       })
       .returning({ id: players.id });
 

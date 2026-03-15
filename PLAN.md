@@ -40,7 +40,7 @@
 ### Phase 4: Season Features
 - [ ] Season management (archive past seasons, start new)
 - [ ] Schedule / upcoming rounds page
-- [ ] Photo uploads for player profiles
+- [x] Player profile photos: static files in /public/players/, URLs stored in DB; 12/16 players have photos
 - [ ] Push notifications for new scores
 
 ### Phase 5: Enhancements
