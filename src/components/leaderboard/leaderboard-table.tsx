@@ -69,9 +69,12 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                     {row.name}
                   </Link>
                   {row.isSocial && (
-                    <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-800">
+                    <span className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
                       Social
                     </span>
+                  )}
+                  {row.slug === "nico-paoletti" && (
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-[10px] font-bold text-white">C</span>
                   )}
                 </div>
               </TableCell>

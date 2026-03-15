@@ -140,6 +140,9 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-light">{profile.name}</h1>
             {profile.isSocial && <Badge variant="secondary">Social</Badge>}
+            {profile.slug === "nico-paoletti" && (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-[11px] font-bold text-white">C</span>
+            )}
           </div>
           <p className="text-sm text-muted-foreground">
             {profile.rank ? `Rank #${profile.rank}` : "Unranked"} &middot;{" "}

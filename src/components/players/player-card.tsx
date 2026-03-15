@@ -34,9 +34,12 @@ export function PlayerCard({ player }: PlayerCardProps) {
     <Link href={`/players/${slug}`}>
       <Card className="relative py-0 shadow-md transition-shadow hover:shadow-lg h-full">
         {isSocial && (
-          <span className="absolute top-2 right-2 z-10 rounded border border-amber-300 bg-amber-100 px-1 py-px text-[11px] font-medium text-amber-800">
+          <span className="absolute top-2 right-2 z-10 rounded border border-gray-300 bg-gray-100 px-1 py-px text-[11px] font-medium text-gray-600">
             Social
           </span>
+        )}
+        {slug === "nico-paoletti" && (
+          <span className="absolute top-2 right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-400 text-[11px] font-bold text-white">C</span>
         )}
         <CardContent className="flex flex-col items-center px-3 pt-6 pb-4 h-full">
           {/* Avatar */}
