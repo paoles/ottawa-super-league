@@ -25,12 +25,17 @@ const NAV_LINKS = [
 ];
 
 const ABOUT_LINKS = [
-  { href: "/players", label: "Players" },
+  { href: "/players", label: "The Players" },
+  { href: "/history", label: "The History" },
+  { href: "/course", label: "The Course" },
+  { href: "/rules", label: "The Rules" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const isAboutActive = ABOUT_LINKS.some((l) => pathname === l.href);
 
@@ -120,15 +125,15 @@ export function Header() {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64">
+            <SheetContent side="right" className="w-64 flex flex-col">
               <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <nav className="mt-8 flex flex-col gap-2">
+              <nav className="mt-8 flex flex-1 flex-col gap-2">
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className={`rounded-md px-4 py-3 text-base font-medium transition-colors ${
+                    className={`mx-4 rounded-md px-4 py-3 text-base font-medium transition-colors ${
                       pathname === link.href
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:text-foreground"
@@ -137,36 +142,52 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
-                {ABOUT_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={`rounded-md px-4 py-3 text-base font-medium transition-colors ${
-                      pathname === link.href
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <Link
-                  href="/scores"
-                  onClick={() => setOpen(false)}
-                  className={`rounded-md px-4 py-3 text-base font-medium transition-colors ${
-                    pathname === "/scores"
+
+                {/* About Us collapsible */}
+                <button
+                  onClick={() => setAboutOpen((v) => !v)}
+                  className={`mx-4 flex items-center justify-between rounded-md px-4 py-3 text-base font-medium transition-colors ${
+                    isAboutActive
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
+                  About Us
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-200 ${aboutOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {aboutOpen &&
+                  ABOUT_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => { setOpen(false); setAboutOpen(false); }}
+                      className={`mx-4 rounded-md py-2.5 pl-8 pr-4 text-sm font-medium transition-colors ${
+                        pathname === link.href
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+
+                {/* Input Score pill */}
+                <Link
+                  href="/scores"
+                  onClick={() => setOpen(false)}
+                  className="mt-2 mx-4 rounded-full bg-primary px-4 py-2.5 text-center text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
                   Input Score
                 </Link>
-                <div className="mt-auto pt-4 border-t">
+
+                {/* Admin pinned to bottom */}
+                <div className="mt-auto border-t pt-4">
                   <Link
                     href="/admin"
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-2 rounded-md px-4 py-3 text-base font-medium transition-colors ${
+                    className={`mx-4 flex items-center gap-2 rounded-md px-4 py-3 text-base font-medium transition-colors ${
                       pathname.startsWith("/admin")
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:text-foreground"

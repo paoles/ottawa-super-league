@@ -156,7 +156,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Hero: `Landscape.png` (`/public/Home/`) as `cover` background with `bg-white/70` overlay; `logo-full.png` centered on top (`relative`, max-w-[340px] sm:max-w-[420px], `mb-3`); padding `py-4 sm:py-6`; no badge; all hero children are `relative` to render above overlay
 - CTA buttons (stacked full-width on mobile, inline on sm+): "Input Score" (primary, → /scores) + "Book a Tee Time" (outline, → external tee-on.com URL, target _blank)
 - Quick Links band: dark green bg (`bg-[#186732]`), 3-col grid of icon cards (Trophy→Leaderboard, BarChart2→Statistics, Users→Players); `bg-white/10` cards with `border-white/20`, hover `bg-white/20`; subtitle text `hidden sm:block`
-- Sponsors: "Proudly sponsored by:" + 5 placeholder tiles (3+2 grid); swap `<div>` for `<img>` when assets ready; store images in `/public/sponsors/`
+- Sponsors: "Proudly Sponsored By" Dancing Script heading + green decorative divider + 6 sponsor logo tiles (2-col mobile / 3-col sm, `gap-3/4`); images from `/public/sponsors/`; `max-h-20/24` object-contain
 - No leaderboard on homepage — leaderboard lives at `/leaderboard`
 - Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → The Players · The History · The Course · The Rules · Contact Us) + "Input Score" green pill on right
 - Desktop nav: all items right-aligned; Input Score is a `rounded-full bg-primary` pill; Admin shield icon after pill
@@ -172,3 +172,8 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Decorative divider below heading: 3-part flex row — gradient line (transparent→primary/60) · solid pill (`h-1 w-12 rounded-full bg-primary`) · gradient line (primary/60→transparent) — same pattern reused on Statistics and Players pages
 - Desktop: `LeaderboardTable`; Mobile: `LeaderboardCard` list
 - ISR 5-min revalidation (`export const revalidate = 300`)
+- Footer hints (below table/cards): muted text with User icon → "Click a player name to view their individual statistics"; pill link → `/statistics` "View full league statistics" (`rounded-full border border-primary/30 bg-primary/5`)
+
+## Footer
+
+- `border-t bg-muted/30`, centered copyright text `text-sm text-muted-foreground`; copyright year: 2019
