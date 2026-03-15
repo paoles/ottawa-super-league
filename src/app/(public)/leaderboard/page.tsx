@@ -1,6 +1,8 @@
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
 import { getLeaderboardData } from "@/lib/stats";
+import Link from "next/link";
+import { BarChart2, User } from "lucide-react";
 
 export const revalidate = 300;
 
@@ -31,6 +33,21 @@ export default async function LeaderboardPage() {
         {leaderboard.map((row) => (
           <LeaderboardCard key={row.playerId} row={row} />
         ))}
+      </div>
+
+      {/* Footer hints */}
+      <div className="mt-8 flex flex-col items-center gap-3 text-sm text-muted-foreground">
+        <p className="flex items-center gap-1.5">
+          <User className="h-4 w-4" />
+          Click a player name to view their individual statistics
+        </p>
+        <Link
+          href="/statistics"
+          className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+        >
+          <BarChart2 className="h-4 w-4" />
+          View full league statistics
+        </Link>
       </div>
     </div>
   );

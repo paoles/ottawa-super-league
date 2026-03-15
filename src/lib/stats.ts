@@ -414,6 +414,8 @@ export async function getPlayersWithStats() {
       gp: row?.gp ?? 0,
       strokeAvg: row?.strokeAvg ?? 0,
       hdcpAvg: row?.hdcpAvg ?? 0,
+      bestRound: row?.bestRound ?? 0,
+      rank: row?.rank ?? null,
     };
   });
 }

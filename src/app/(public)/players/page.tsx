@@ -11,13 +11,8 @@ export const revalidate = 300;
 export default async function PlayersPage() {
   const players = await getPlayersWithStats();
 
-  // Sort by stroke avg (lower is better), players with 0 GP last
-  const sorted = [...players].sort((a, b) => {
-    if (a.gp === 0 && b.gp === 0) return a.name.localeCompare(b.name);
-    if (a.gp === 0) return 1;
-    if (b.gp === 0) return 1;
-    return a.strokeAvg - b.strokeAvg;
-  });
+  // Sort alphabetically
+  const sorted = [...players].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -32,17 +27,9 @@ export default async function PlayersPage() {
         <div className="h-1 w-12 rounded-full bg-primary" />
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/60" />
       </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {sorted.map((player) => (
-          <PlayerCard
-            key={player.id}
-            name={player.name}
-            slug={player.slug}
-            isSocial={player.isSocial}
-            gp={player.gp}
-            strokeAvg={player.strokeAvg}
-            hdcpAvg={player.hdcpAvg}
-          />
+          <PlayerCard key={player.id} player={player} />
         ))}
       </div>
     </div>
