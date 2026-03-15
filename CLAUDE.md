@@ -156,6 +156,21 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Footer note: `rounded-lg border bg-muted/40 px-4 py-3` with bolded "Note:" about amendment process
 - Imports: Card, CardHeader, CardTitle, CardContent from shadcn/ui
 
+## Contact Page Design
+
+- Route: `/contact`
+- Static page (no DB, no ISR)
+- Heading: "Contact Us" (Dancing Script + green decorative divider)
+- Two sections below heading:
+  1. **Join the League** — `max-w-3xl mx-auto`; 2-col grid on sm+ (stacked mobile)
+     - Left: group photo (`/contact/group.jpg`) in `aspect-video rounded-xl overflow-hidden`, `next/image` with `fill object-cover`
+     - Right: Dancing Script `text-3xl` heading "Join the league!" + body text with `mailto:` link to `ottawasuperleague.vip@gmail.com` (primary color, underlined) + bold "Follow us via the link below:" + Instagram SVG icon (`h-10 w-10`) linking to `https://www.instagram.com/ottawasuperleague/` (new tab)
+     - Instagram icon: inline SVG with radialGradient (yellow→red→purple→blue), white camera outline
+  2. **Commissioner's Memorial Hall** — `mt-16`; Dancing Script `text-3xl` centered heading
+     - `COMMISSIONERS` array: Nico Paoletti (2025–Present), Kevin Slack (2023–2025), Blair Watson (2019–2023)
+     - 3-col grid on sm+ (`max-w-3xl mx-auto`, `gap-4`); cards match ChampionCard from `/history` (rounded-2xl, aspect-square image with hover zoom, name `text-lg font-semibold` + years below)
+     - Images: `/contact/nico.JPG`, `/contact/kevin.jpg`, `/contact/blair.jpg`
+
 ## History Page Design
 
 - Route: `/history`
