@@ -131,7 +131,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
 - Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
-- `ChampionCard`: `rounded-2xl overflow-hidden`, portrait `aspect-[3/4]`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift
+- `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift
 - Grid: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4`; `mt-5` between heading and grid
 - First 2 cards in each section use `priority={true}` for LCP optimization
 - Section spacing: `mt-14` between sections
