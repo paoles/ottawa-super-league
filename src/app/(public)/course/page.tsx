@@ -11,7 +11,7 @@ const COURSE_COLORS: Record<Course, string> = {
   West: "#f59e0b",
 };
 
-const DISPLAY_ORDER: Course[] = ["North", "West", "South", "East"];
+const DISPLAY_ORDER: Course[] = ["North", "East", "West", "South"];
 
 const HERO_IMAGES: { src: string; alt: string }[] = [
   { src: "/course/hero/1.png", alt: "The Meadows Golf & Country Club" },
