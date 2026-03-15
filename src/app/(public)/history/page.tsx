@@ -46,7 +46,7 @@ function ChampionCard({
 }) {
   return (
     <div className="group overflow-hidden rounded-2xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl dark:bg-card">
-      <div className="relative aspect-[3/4]">
+      <div className="relative aspect-square">
         <Image
           src={src}
           alt={name + " (" + year + ")"}
