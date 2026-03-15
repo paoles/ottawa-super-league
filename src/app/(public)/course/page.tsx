@@ -97,7 +97,12 @@ export default function CoursePage() {
 
       {/* The Four Nines */}
       <section className="mt-12">
-        <h2 className="mb-4 text-center text-lg font-medium">The Four Nines</h2>
+        <h2
+          className="mb-5 text-center text-3xl font-bold text-foreground"
+          style={{ fontFamily: "var(--font-dancing-script)" }}
+        >
+          The Four Nines
+        </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {DISPLAY_ORDER.map((course) => {
             const ratings = COURSE_RATINGS[course];
@@ -139,22 +144,32 @@ export default function CoursePage() {
 
       {/* Course Map */}
       <section className="mt-12">
-        <h2 className="mb-4 text-center text-lg font-medium">Course Layout</h2>
-        <div className="overflow-hidden rounded-xl border">
+        <h2
+          className="mb-5 text-center text-3xl font-bold text-foreground"
+          style={{ fontFamily: "var(--font-dancing-script)" }}
+        >
+          Course Layout
+        </h2>
+        <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border">
           <Image
-            src="/course/Map.png"
+            src="/course/Map%20Update.png"
             alt="The Meadows course layout map"
             width={1024}
             height={768}
             className="w-full object-contain"
-            sizes="(max-width: 1024px) 100vw, 1024px"
+            sizes="(max-width: 672px) 100vw, 672px"
           />
         </div>
       </section>
 
       {/* Google Maps */}
       <section className="mt-12">
-        <h2 className="mb-4 text-center text-lg font-medium">Find Us</h2>
+        <h2
+          className="mb-5 text-center text-3xl font-bold text-foreground"
+          style={{ fontFamily: "var(--font-dancing-script)" }}
+        >
+          Course Location
+        </h2>
         <div className="overflow-hidden rounded-xl border">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2806.6!2d-75.5654473!3d45.3315279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cce0bcafc869d75%3A0x65d2dafaca658722!2sThe%20Meadows%20Golf%20%26%20Country%20Club!5e1!3m2!1sen!2sca"
