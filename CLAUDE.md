@@ -122,14 +122,14 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 - Routes: `/history`, `/course`, `/rules`, `/contact`
 - Each page uses Dancing Script heading + green decorative divider (same pattern as Leaderboard/Statistics/Players)
-- Headings: "The History", "Our Course", "The Rules", "Contact Us"
+- Page headings match nav labels: "The Players", "Our History", "The Course", "Our Rules", "Contact Us"
 - No ISR needed (static pages)
 
 ## Course Page Design
 
 - Route: `/course`
 - Static page (no DB)
-- Heading: "Our Course" (Dancing Script + green decorative divider)
+- Heading: "The Course" (Dancing Script + green decorative divider)
 - Sections (top to bottom):
   1. Meadows Logo — centered `next/image`, `max-w-[200px] sm:max-w-[260px]`, `priority`; src `/course/Meadows%20Logo.png`
   2. Hero Carousel (`src/components/course/hero-carousel.tsx`) — client component; crossfade (`transition-opacity duration-1000`), auto-rotate 5s; images stacked `absolute inset-0` with `opacity-100`/`opacity-0`; container `h-[220px] sm:h-[360px] rounded-xl overflow-hidden`; dot navigation at bottom; images hardcoded in page as `HERO_IMAGES` array from `/course/hero/`
@@ -189,7 +189,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Quick Links band: dark green bg (`bg-[#186732]`), 3-col grid of icon cards (Trophy→Leaderboard, BarChart2→Statistics, Users→Players); `bg-white/10` cards with `border-white/20`, hover `bg-white/20`; subtitle text `hidden sm:block`
 - Sponsors: "Proudly Sponsored By" Dancing Script heading + green decorative divider + 6 sponsor logo tiles (2-col mobile / 3-col sm, `gap-3/4`); images from `/public/sponsors/`; `max-h-20/24` object-contain
 - No leaderboard on homepage — leaderboard lives at `/leaderboard`
-- Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → The Players · The History · The Course · The Rules · Contact Us) + "Input Score" green pill on right
+- Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → The Players · Our History · The Course · Our Rules · Contact Us) + "Input Score" green pill on right
 - Desktop nav: all items right-aligned; Input Score is a `rounded-full bg-primary` pill; Admin shield icon after pill
 - Mobile nav: Input Score pill visible in header bar; hamburger opens sheet with Home · Leaderboard · Statistics · About Us ▼ (collapsible, chevron, indented sub-links) · Input Score pill (mx-4 rounded-full); all nav items use mx-4 for side whitespace; Admin pinned to bottom with mt-auto border-t
 - Rank medal colors: #1 gold (`text-yellow-500`), #2 silver (`text-slate-400`), #3 bronze (`text-amber-600`)

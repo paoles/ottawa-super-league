@@ -26,9 +26,9 @@ const NAV_LINKS = [
 
 const ABOUT_LINKS = [
   { href: "/players", label: "The Players" },
-  { href: "/history", label: "The History" },
+  { href: "/history", label: "Our History" },
   { href: "/course", label: "The Course" },
-  { href: "/rules", label: "The Rules" },
+  { href: "/rules", label: "Our Rules" },
   { href: "/contact", label: "Contact Us" },
 ];
 

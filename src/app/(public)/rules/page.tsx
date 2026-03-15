@@ -5,7 +5,7 @@ export default function RulesPage() {
         className="text-center text-4xl font-bold text-primary"
         style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
       >
-        The Rules
+        Our Rules
       </h1>
       <div className="mx-auto mt-3 mb-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/60" />
