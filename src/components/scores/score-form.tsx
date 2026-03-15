@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -130,24 +130,29 @@ export function ScoreForm({ players }: ScoreFormProps) {
   return (
     <div>
       {/* Progress */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center">
         {STEP_LABELS.map((label, i) => (
-          <div key={label} className="flex flex-col items-center gap-1">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
-                i + 1 < step
-                  ? "bg-primary text-primary-foreground"
-                  : i + 1 === step
-                    ? "bg-primary/20 text-primary ring-2 ring-primary"
-                    : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {i + 1 < step ? <Check className="h-4 w-4" /> : i + 1}
+          <React.Fragment key={label}>
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium ${
+                  i + 1 < step
+                    ? "bg-primary text-primary-foreground"
+                    : i + 1 === step
+                      ? "bg-primary/20 text-primary ring-2 ring-primary"
+                      : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {i + 1 < step ? <Check className="h-4 w-4" /> : i + 1}
+              </div>
+              <span className="hidden text-xs text-muted-foreground sm:block">
+                {label}
+              </span>
             </div>
-            <span className="hidden text-xs text-muted-foreground sm:block">
-              {label}
-            </span>
-          </div>
+            {i < STEP_LABELS.length - 1 && (
+              <div className={`mx-1 mb-3 h-0.5 flex-1 ${i + 1 < step ? "bg-primary" : "bg-muted"}`} />
+            )}
+          </React.Fragment>
         ))}
       </div>
 
