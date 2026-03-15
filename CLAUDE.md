@@ -119,10 +119,22 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## About Pages Design
 
-- Routes: `/history`, `/course`, `/rules`, `/contact` (all placeholder, content TBD)
+- Routes: `/history`, `/course`, `/rules`, `/contact`
 - Each page uses Dancing Script heading + green decorative divider (same pattern as Leaderboard/Statistics/Players)
 - Headings: "The History", "The Course", "The Rules", "Contact Us"
-- No ISR needed (static placeholder pages)
+- No ISR needed (static pages)
+
+## History Page Design
+
+- Route: `/history`
+- Static page (no DB) — all champion data hardcoded in `page.tsx`
+- Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
+- Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
+- Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
+- `ChampionCard`: `rounded-2xl overflow-hidden`, portrait `aspect-[3/4]`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift
+- Grid: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4`; `mt-5` between heading and grid
+- First 2 cards in each section use `priority={true}` for LCP optimization
+- Section spacing: `mt-14` between sections
 
 ## Players Directory Design
 
@@ -131,7 +143,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Sort: alphabetical (`a.name.localeCompare(b.name)`)
 - Grid: 2-col mobile / 3-col sm / 4-col lg; `gap-3`
 - `PlayerCard`: portrait profile tile (`h-full`, `shadow-md hover:shadow-lg`, `relative`)
-  - Social badge: `absolute top-2 right-2 z-10`, amber style, compact (`px-1 py-px text-[11px]`)
+  - Social badge: `absolute top-2 right-2 z-10`, gray style (`border-gray-300 bg-gray-100 text-gray-600`), compact (`px-1 py-px text-[11px]`); Commissioner badge: same position, golden circle (`h-5 w-5 rounded-full bg-yellow-400 text-white font-bold`) for slug="nico-paoletti" only
   - Avatar: `h-20 w-20` rounded-full with `ring-2 ring-primary/20`; profile photo or green initials (`text-xl font-bold`)
   - Name: `text-base font-semibold` centered below avatar
   - Stats strip (border-t): GP · Avg · Hdcp · Rank — plain uniform text, no color coding; unranked shows "—"
