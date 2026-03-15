@@ -18,6 +18,8 @@ const HERO_IMAGES: { src: string; alt: string }[] = [
   { src: "/course/hero/2.png", alt: "The Meadows Golf & Country Club" },
   { src: "/course/hero/3.png", alt: "The Meadows Golf & Country Club" },
   { src: "/course/hero/4.png", alt: "The Meadows Golf & Country Club" },
+  { src: "/course/hero/5.png", alt: "The Meadows Golf & Country Club" },
+  { src: "/course/hero/6.png", alt: "The Meadows Golf & Country Club" },
 ];
 
 export default function CoursePage() {
