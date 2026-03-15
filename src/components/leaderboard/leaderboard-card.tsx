@@ -37,7 +37,7 @@ export function LeaderboardCard({ row }: LeaderboardCardProps) {
                   <span className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">Social</span>
                 )}
                 {row.slug === "nico-paoletti" && (
-                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-[10px] font-bold text-white">C</span>
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
                 )}
               </div>
             </div>

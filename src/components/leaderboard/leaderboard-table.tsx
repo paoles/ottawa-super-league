@@ -74,7 +74,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                     </span>
                   )}
                   {row.slug === "nico-paoletti" && (
-                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-[10px] font-bold text-white">C</span>
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
                   )}
                 </div>
               </TableCell>

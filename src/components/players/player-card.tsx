@@ -39,7 +39,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
           </span>
         )}
         {slug === "nico-paoletti" && (
-          <span className="absolute top-2 right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-400 text-[11px] font-bold text-white">C</span>
+          <span className="absolute top-2 right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
         )}
         <CardContent className="flex flex-col items-center px-3 pt-6 pb-4 h-full">
           {/* Avatar */}

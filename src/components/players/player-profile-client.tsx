@@ -141,7 +141,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
             <h1 className="text-2xl font-light">{profile.name}</h1>
             {profile.isSocial && <Badge variant="secondary">Social</Badge>}
             {profile.slug === "nico-paoletti" && (
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-[11px] font-bold text-white">C</span>
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
             )}
           </div>
           <p className="text-sm text-muted-foreground">
