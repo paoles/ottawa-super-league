@@ -122,8 +122,22 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 - Routes: `/history`, `/course`, `/rules`, `/contact`
 - Each page uses Dancing Script heading + green decorative divider (same pattern as Leaderboard/Statistics/Players)
-- Headings: "The History", "The Course", "The Rules", "Contact Us"
+- Headings: "The History", "Our Course", "The Rules", "Contact Us"
 - No ISR needed (static pages)
+
+## Course Page Design
+
+- Route: `/course`
+- Static page (no DB)
+- Heading: "Our Course" (Dancing Script + green decorative divider)
+- Sections (top to bottom):
+  1. Meadows Logo — centered `next/image`, `max-w-[200px] sm:max-w-[260px]`, `priority`; src `/course/Meadows%20Logo.png`
+  2. Hero Carousel (`src/components/course/hero-carousel.tsx`) — client component; crossfade (`transition-opacity duration-1000`), auto-rotate 5s; images stacked `absolute inset-0` with `opacity-100`/`opacity-0`; container `h-[220px] sm:h-[360px] rounded-xl overflow-hidden`; dot navigation at bottom; images hardcoded in page as `HERO_IMAGES` array from `/course/hero/`
+  3. Description — `max-w-2xl text-center text-muted-foreground`
+  4. CTA Buttons — stacked mobile / inline sm+; "Course Website" (primary) → `https://themeadowsgolf.ca/meadows`; "Book a Tee Time" (outline) → tee-on.com URL
+  5. "The Four Nines" — `grid-cols-2 sm:grid-cols-4 gap-3`; display order: North, West, South, East; each card `rounded-xl border-2 p-4 text-center` with course color border; shows Par 36, White tee row (`bg-muted/40`), Blue tee row (`bg-blue-50`, `text-blue-600`); data from `COURSE_RATINGS`/`PAR` in `constants.ts`
+  6. Course Layout — `Map.png` in `rounded-xl border overflow-hidden`, `object-contain`
+  7. Find Us — Google Maps iframe, satellite view (`!5e1` in pb param), correct pin at The Meadows (coords: 45.3315279, -75.5654473; place ID `0x4cce0bcafc869d75:0x65d2dafaca658722`); `h-[300px] sm:h-[400px]`
 
 ## History Page Design
 
