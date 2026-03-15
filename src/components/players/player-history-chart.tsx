@@ -96,17 +96,17 @@ export function PlayerHistoryChart({ history, selectedCourse }: PlayerHistoryCha
   return (
     <div className="h-[280px] sm:h-[350px]">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ left: -10, right: 10 }}>
+        <LineChart data={chartData} margin={{ left: -8, right: 20, bottom: -8 }}>
           <XAxis
             dataKey="date"
-            tick={{ fontSize: isMobile ? 10 : 12 }}
+            tick={{ fontSize: isMobile ? 11 : 13 }}
             interval={tickInterval}
             tickFormatter={(v) => {
               const d = new Date(v + "T00:00:00");
               return `${d.getMonth() + 1}/${d.getDate()}`;
             }}
           />
-          <YAxis domain={["dataMin - 2", "dataMax + 2"]} tick={{ fontSize: isMobile ? 10 : 12 }} width={28} />
+          <YAxis domain={["dataMin - 2", "dataMax + 2"]} tick={{ fontSize: isMobile ? 11 : 13 }} width={30} />
           <Tooltip
             labelFormatter={(v) => {
               const d = new Date(v + "T00:00:00");

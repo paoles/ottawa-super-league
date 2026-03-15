@@ -113,6 +113,8 @@ Handicap formula: `(Score - CR) * 113 / Slope`
   - Linear regression trendline on League Avg: dashed green line (strokeDasharray="6 3", 50% opacity)
   - Chart height: `h-[280px] sm:h-[400px]`; x-axis tick density adapts (~5 mobile, ~10 desktop)
   - `isMobile` detected via `useEffect` + `resize` listener
+  - Chart margin: `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`
+- Section card titles: `text-lg font-medium`
 - `ScoreTrendPoint` type includes `course: string` to enable client-side filtering
 
 ## About Pages Design
@@ -145,11 +147,12 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Course filter pills: `All | East | North | West | South` — same style as statistics page
 - Summary cards (3-col mobile / 6-col desktop): Avg · Hdcp · Best (green) · Worst (red) · Win% · W-L-T — all recompute from `filteredHistory` when course is selected
 - Section order: Score History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table
-- Score History chart (`PlayerHistoryChart`): per-course background lines (thin, `connectNulls`, color-coded) + bold main line + dashed linear regression trendline (same color as main line, `strokeDasharray="6 3"`, 50% opacity); `isMobile` responsive; chart height `h-[280px] sm:h-[350px]`
+- Score History chart (`PlayerHistoryChart`): per-course background lines (thin, `connectNulls`, color-coded) + bold main line + dashed linear regression trendline (same color as main line, `strokeDasharray="6 3"`, 50% opacity); `isMobile` responsive; chart height `h-[280px] sm:h-[350px]`; chart margin `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`
   - "All" selected: main key = `"Score"` (avg of day's rounds), color = `#186732`; all course lines at 40–55% opacity
   - Course selected: main key = course name, color = course color; other course lines at 15% opacity
 - Course Breakdown tiles: same as statistics page (2×2 → 4-col, sorted by avg score, color-coded borders/labels, green best round); visible on "All" only
 - Score Distribution: reuses `DistributionChart`, computed from `filteredHistory`
+- Section card titles: `text-lg font-medium`
 - Round History: sortable by any column (click header to sort, again to reverse; active column shows ↑/↓); columns: Date · Course (color-coded) · Tee · Score · Result; no Hdcp column
 
 ## Homepage Design

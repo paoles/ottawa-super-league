@@ -191,7 +191,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       {/* Score Trends */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-lg font-light">
+          <CardTitle className="text-lg font-medium">
             Score Trends{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : " Over Time"}
           </CardTitle>
         </CardHeader>
@@ -204,7 +204,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       {selectedCourse === "All" && (
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-lg font-light">Course Breakdown</CardTitle>
+            <CardTitle className="text-lg font-medium">Course Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -234,7 +234,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       {/* Score Distribution */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-lg font-light">Score Distribution</CardTitle>
+          <CardTitle className="text-lg font-medium">Score Distribution</CardTitle>
         </CardHeader>
         <CardContent>
           <DistributionChart data={distributionBuckets} />
@@ -244,7 +244,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       {/* Top 5 Best Rounds */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-lg font-light">
+          <CardTitle className="text-lg font-medium">
             Top 5 Best Rounds{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : ""}
           </CardTitle>
         </CardHeader>

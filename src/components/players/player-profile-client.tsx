@@ -207,7 +207,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           {/* Score History Chart */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-base font-light">
+              <CardTitle className="text-lg font-medium">
                 Score History
                 {selectedCourse !== "All" && (
                   <span className="ml-2 text-sm font-normal" style={{ color: COURSE_COLORS[selectedCourse] }}>
@@ -225,7 +225,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           {selectedCourse === "All" && profile.courseStats.length > 0 && (
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="text-base font-light">Course Breakdown</CardTitle>
+                <CardTitle className="text-lg font-medium">Course Breakdown</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -252,7 +252,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           {/* Score Distribution */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-base font-light">Score Distribution</CardTitle>
+              <CardTitle className="text-lg font-medium">Score Distribution</CardTitle>
             </CardHeader>
             <CardContent>
               <DistributionChart data={distributionBuckets} />
@@ -262,7 +262,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           {/* Round History (sortable) */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base font-light">
+              <CardTitle className="text-lg font-medium">
                 Round History
                 {selectedCourse !== "All" && (
                   <span className="ml-2 text-sm font-normal text-muted-foreground">&mdash; {selectedCourse}</span>

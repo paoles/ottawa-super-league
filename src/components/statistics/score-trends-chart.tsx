@@ -94,17 +94,17 @@ export function ScoreTrendsChart({ data }: ScoreTrendsChartProps) {
     <div>
       <div className="h-[280px] w-full sm:h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ left: -10, right: 10 }}>
+          <LineChart data={chartData} margin={{ left: -8, right: 20, bottom: -8 }}>
             <XAxis
               dataKey="date"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 11 : 13 }}
               interval={tickInterval}
               tickFormatter={(v) => {
                 const d = new Date(v + "T00:00:00");
                 return `${d.getMonth() + 1}/${d.getDate()}`;
               }}
             />
-            <YAxis domain={[30, 65]} tick={{ fontSize: isMobile ? 10 : 12 }} width={28} />
+            <YAxis domain={[30, 65]} tick={{ fontSize: isMobile ? 11 : 13 }} width={30} />
             <Tooltip
               labelFormatter={(v) => {
                 const d = new Date(v + "T00:00:00");
