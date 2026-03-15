@@ -7,7 +7,7 @@ interface StepCourseProps {
   onChange: (course: Course) => void;
 }
 
-const DISPLAY_ORDER: Course[] = ["North", "West", "South", "East"];
+const DISPLAY_ORDER: Course[] = ["North", "East", "West", "South"];
 
 const COURSE_COLORS: Record<Course, string> = {
   North: "border-emerald-200 bg-emerald-50 text-emerald-900",
