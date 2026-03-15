@@ -5,11 +5,12 @@ import { Trophy, BarChart2, Users } from "lucide-react";
 export const revalidate = 300;
 
 const SPONSORS = [
-  { name: "mycar.ca" },
-  { name: "Pinpoint Solutions" },
-  { name: "Freedom Convoy 2022" },
-  { name: "The Business Inn & Suites" },
-  { name: "The J——er Quotes" },
+  { name: "mycar.ca", logo: "/sponsors/myCar-logo-4.png" },
+  { name: "Pinpoint Solutions", logo: "/sponsors/Pinpont%20Logo.avif" },
+  { name: "Freedom Convoy 2022", logo: "/sponsors/freedom%20convoy%20logo.png" },
+  { name: "The Business Inn & Suites", logo: "/sponsors/TBI_Logo.webp" },
+  { name: "The J——er Quotes", logo: "/sponsors/claude-logo-freelogovectors.net_.png" },
+  { name: "Métis Nation", logo: "/sponsors/metis%20nation%20logo.webp" },
 ];
 
 const QUICK_LINKS = [
@@ -22,20 +23,23 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-white px-4 py-6 text-center sm:py-10">
-        <div className="mx-auto max-w-[260px] sm:max-w-[300px]">
+      <section
+        className="relative px-4 py-4 text-center sm:py-6"
+        style={{
+          backgroundImage: "url('/Home/Landscape.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/70" />
+        <div className="relative mx-auto mb-3 max-w-[340px] sm:max-w-[420px]">
           <img
             src="/logo-full.png"
             alt="Ottawa Super League"
             className="mx-auto w-full object-contain"
           />
         </div>
-        <div className="mt-2 mb-5">
-          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-primary">
-            Summer Tour 2025
-          </span>
-        </div>
-        <div className="mx-auto flex max-w-xs flex-col gap-2.5 sm:max-w-none sm:flex-row sm:justify-center">
+        <div className="relative mx-auto flex max-w-xs flex-col gap-2.5 sm:max-w-none sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/scores">Input Score</Link>
           </Button>
@@ -73,28 +77,32 @@ export default async function HomePage() {
 
       {/* Sponsors */}
       <section className="border-t bg-white px-4 py-8 text-center">
-        <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Proudly sponsored by:
-        </p>
-        <div className="mx-auto grid max-w-2xl grid-cols-3 gap-3">
-          {SPONSORS.slice(0, 3).map((s) => (
+        <div className="mb-6">
+          <h2
+            className="mb-2 text-3xl sm:text-4xl text-primary"
+            style={{ fontFamily: "var(--font-dancing-script)" }}
+          >
+            Proudly Sponsored By
+          </h2>
+          <div className="flex items-center justify-center gap-2">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-primary/60" />
+            <div className="h-1 w-10 rounded-full bg-primary" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-primary/60" />
+          </div>
+        </div>
+        <div className="mx-auto grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+          {SPONSORS.map((s) => (
             <div
               key={s.name}
-              className="flex h-16 items-center justify-center rounded-lg border bg-muted/20 px-3 text-center text-sm font-semibold text-foreground/70"
+              className="flex h-28 items-center justify-center rounded-lg border bg-white p-3 sm:h-32 sm:p-4"
             >
-              {s.name}
+              <img
+                src={s.logo}
+                alt={s.name}
+                className="max-h-20 max-w-full object-contain sm:max-h-24"
+              />
             </div>
           ))}
-          <div className="col-span-3 grid grid-cols-2 gap-3">
-            {SPONSORS.slice(3).map((s) => (
-              <div
-                key={s.name}
-                className="flex h-16 items-center justify-center rounded-lg border bg-muted/20 px-3 text-center text-sm font-semibold text-foreground/70"
-              >
-                {s.name}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
     </div>

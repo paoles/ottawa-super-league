@@ -16,6 +16,7 @@
 - [ ] Push notifications for new scores
 
 ## Done
+- [x] Homepage hero: Landscape.png background image with white/70 overlay behind OSL logo
 - [x] Player profile redesign: course filter pills, color-coded stats, course breakdown tiles, score distribution, sortable round history, back button, score history trendline
 - [x] Score Trends chart: responsive (mobile = league avg only, desktop = individual lines + league avg)
 - [x] Core app: leaderboard, score input, statistics, player profiles
@@ -25,4 +26,7 @@
 - [x] Route groups (public vs admin layouts)
 - [x] CSV export API
 - [x] Production build passing
+- [x] Players directory redesign: portrait profile tiles, alphabetical sort, Social badge top-right, stats strip (GP/Avg/Hdcp/Rank)
+- [x] About Us dropdown + placeholder pages (History, Course, Rules, Contact Us) with Dancing Script heading + divider
+- [x] Mobile sidebar: collapsible About Us accordion, Input Score pill with mx-4 whitespace, Admin pinned to bottom
 - [x] Mobile leaderboard cards redesigned (two-row, Best/Worst/Win% color-coded, Hdcp on top row, Social badge inline)

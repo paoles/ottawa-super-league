@@ -115,6 +115,27 @@ Handicap formula: `(Score - CR) * 113 / Slope`
   - `isMobile` detected via `useEffect` + `resize` listener
 - `ScoreTrendPoint` type includes `course: string` to enable client-side filtering
 
+## About Pages Design
+
+- Routes: `/history`, `/course`, `/rules`, `/contact` (all placeholder, content TBD)
+- Each page uses Dancing Script heading + green decorative divider (same pattern as Leaderboard/Statistics/Players)
+- Headings: "The History", "The Course", "The Rules", "Contact Us"
+- No ISR needed (static placeholder pages)
+
+## Players Directory Design
+
+- Route: `/players`
+- Data: `getPlayersWithStats()` returns id, name, slug, isSocial, photoUrl, gp, strokeAvg, hdcpAvg, bestRound, rank
+- Sort: alphabetical (`a.name.localeCompare(b.name)`)
+- Grid: 2-col mobile / 3-col sm / 4-col lg; `gap-3`
+- `PlayerCard`: portrait profile tile (`h-full`, `shadow-md hover:shadow-lg`, `relative`)
+  - Social badge: `absolute top-2 right-2 z-10`, amber style, compact (`px-1 py-px text-[11px]`)
+  - Avatar: `h-20 w-20` rounded-full with `ring-2 ring-primary/20`; profile photo or green initials (`text-xl font-bold`)
+  - Name: `text-base font-semibold` centered below avatar
+  - Stats strip (border-t): GP · Avg · Hdcp · Rank — plain uniform text, no color coding; unranked shows "—"
+  - No rounds: "No rounds played" in muted text
+- ISR 5-min revalidation
+
 ## Player Profile Design
 
 - Server page (`/players/[slug]`) fetches `getPlayerProfile()` + `getPlayerHistory()`, passes to `PlayerProfileClient`
@@ -132,14 +153,14 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Homepage Design
 
-- Hero: `logo-full.png` centered on white bg (`bg-white`), padding `py-6 sm:py-10`; "Summer Tour 2025" pill badge below logo (`bg-primary/10 text-primary rounded-full`)
+- Hero: `Landscape.png` (`/public/Home/`) as `cover` background with `bg-white/70` overlay; `logo-full.png` centered on top (`relative`, max-w-[340px] sm:max-w-[420px], `mb-3`); padding `py-4 sm:py-6`; no badge; all hero children are `relative` to render above overlay
 - CTA buttons (stacked full-width on mobile, inline on sm+): "Input Score" (primary, → /scores) + "Book a Tee Time" (outline, → external tee-on.com URL, target _blank)
 - Quick Links band: dark green bg (`bg-[#186732]`), 3-col grid of icon cards (Trophy→Leaderboard, BarChart2→Statistics, Users→Players); `bg-white/10` cards with `border-white/20`, hover `bg-white/20`; subtitle text `hidden sm:block`
 - Sponsors: "Proudly sponsored by:" + 5 placeholder tiles (3+2 grid); swap `<div>` for `<img>` when assets ready; store images in `/public/sponsors/`
 - No leaderboard on homepage — leaderboard lives at `/leaderboard`
-- Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → Players) + "Input Score" green pill on right
+- Nav: Home · Leaderboard · Statistics · About Us ▼ (dropdown → The Players · The History · The Course · The Rules · Contact Us) + "Input Score" green pill on right
 - Desktop nav: all items right-aligned; Input Score is a `rounded-full bg-primary` pill; Admin shield icon after pill
-- Mobile nav: Input Score pill visible in header bar; hamburger opens sheet with Home · Leaderboard · Statistics · Players · Input Score, then Admin (with shield icon) at bottom separated by a border-t divider
+- Mobile nav: Input Score pill visible in header bar; hamburger opens sheet with Home · Leaderboard · Statistics · About Us ▼ (collapsible, chevron, indented sub-links) · Input Score pill (mx-4 rounded-full); all nav items use mx-4 for side whitespace; Admin pinned to bottom with mt-auto border-t
 - Rank medal colors: #1 gold (`text-yellow-500`), #2 silver (`text-slate-400`), #3 bronze (`text-amber-600`)
 - Leaderboard table: dark green header, Best=green, Worst=red, W/L/T header (gray values), Win% column: color-coded number + slim bar underneath (`h-1 w-12 rounded-full`, `gap-px`); bar color matches text (green/orange/red)
 - Mobile cards: `px-3 py-3` padding, `gap-2` between cards, `Card py-0` + `shadow-md hover:shadow-lg`; top row: rank circle (top-3 gold/silver/bronze) · name · Social badge inline · Hdcp + avg right-aligned; stat row (`text-[13px]`): left=GP · Best {green number} · Worst {red number}, right=W-L-T (gray) · Win% (color-coded ≥60% green, ≥30% orange, <30% red)
