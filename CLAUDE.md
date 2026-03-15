@@ -139,6 +139,23 @@ Handicap formula: `(Score - CR) * 113 / Slope`
   6. Course Layout — Dancing Script `text-3xl font-bold text-foreground` heading; `Map v4.png` in `mx-auto max-w-2xl rounded-xl border overflow-hidden`, `object-contain`; capped at max-w-2xl to prevent blurring on desktop
   7. Course Location — Dancing Script `text-3xl font-bold text-foreground` heading; Google Maps iframe, satellite view (`!5e1` in pb param), correct pin at The Meadows (coords: 45.3315279, -75.5654473; place ID `0x4cce0bcafc869d75:0x65d2dafaca658722`); `h-[300px] sm:h-[400px]`
 
+## Rules Page Design
+
+- Route: `/rules`
+- Static page (no DB, no ISR)
+- Heading: "Our Rules" (Dancing Script + green decorative divider)
+- Intro paragraph: centered `max-w-2xl text-muted-foreground`, explains AGM process
+- Rule data: `RULES_SECTIONS` array at top of file, each with `title` + `rules: { name, text }[]`
+- 4 section Cards stacked in `max-w-3xl` container with `space-y-6`:
+  1. **General Play** (4 rules): Eligible Course, Eligible Tees, Round Declaration, Conceded Putts
+  2. **Relief & Drops** (7 rules): OB/White Stakes, Lost Ball (3-min search), Red Penalty Areas, Obstruction Relief (Trees), Embedded Ball in Fairway Divot, Casual Water, General Drop Disputes
+  3. **Scoring & Rankings** (4 rules): Maximum Score (double par +1, excludes tournaments), Handicap Index formula, Match Results (W/L/T determination), League Ranking (10-round minimum)
+  4. **Governance** (3 rules): AGM voting, Social Membership (no voting rights), Commissioner Authority
+- Section titles: Dancing Script `text-2xl font-bold text-foreground` with `WebkitTextStroke: "0.6px currentColor"`
+- Rules: `<ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed">` with `<strong>` rule names
+- Footer note: `rounded-lg border bg-muted/40 px-4 py-3` with bolded "Note:" about amendment process
+- Imports: Card, CardHeader, CardTitle, CardContent from shadcn/ui
+
 ## History Page Design
 
 - Route: `/history`
