@@ -33,7 +33,7 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
 - Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
 - Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
-- Course tile order: North/West top row, South/East bottom row
+- Course tile order: North/East top row, West/South bottom row
 - Route groups: public pages in `src/app/(public)/` (Header/Footer layout), admin in `src/app/admin/` (AdminNav layout)
 
 ## Admin
@@ -99,7 +99,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
 - Heading: "Statistics" in Dancing Script + green decorative divider; icon-only `CsvExportButton` (`iconOnly` prop) right-aligned using flex row with left `w-8` spacer to keep title centered
 - `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
-- Course filter pills: `All | East | North | West | South` — active pill uses course color or primary green for All
+- Course filter pills: `All | North | East | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
 - Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
 - Player profiles CTA (compact single-row card, `py-2.5`) appears after summary cards, links to `/players`
@@ -203,7 +203,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state
 - Back button: orange chevron (`border-2 border-orange-400`, `rounded-2xl`, `h-16 w-9`) inline with avatar; uses `router.back()` with fallback to `/players`
 - Avatar: `h-16 w-16` rounded-full with `ring-2 ring-primary/20`; shows `profile.photoUrl` via `<Image>` (`object-cover object-top`) when available, falls back to green initials
-- Course filter pills: `All | East | North | West | South` — same style as statistics page
+- Course filter pills: `All | North | East | West | South` — same style as statistics page
 - Summary cards (3-col mobile / 6-col desktop): Avg · Hdcp · Best (green) · Worst (red) · Win% · W-L-T — all recompute from `filteredHistory` when course is selected
 - Section order: Score History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table
 - Score History chart (`PlayerHistoryChart`): per-course background lines (thin, `connectNulls`, color-coded) + bold main line + dashed linear regression trendline (same color as main line, `strokeDasharray="6 3"`, 50% opacity); `isMobile` responsive; chart height `h-[280px] sm:h-[350px]`; chart margin `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`
