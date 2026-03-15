@@ -152,7 +152,7 @@ export default function CoursePage() {
         </h2>
         <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border">
           <Image
-            src="/course/Map%20Update.png"
+            src="/course/Map%20v4.png"
             alt="The Meadows course layout map"
             width={1024}
             height={768}
