@@ -30,6 +30,7 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - ISR with 5-min revalidation on read pages
 - Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths
 - Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
+- Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
 - Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
 - Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
 - Course tile order: North/West top row, South/East bottom row
