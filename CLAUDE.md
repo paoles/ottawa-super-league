@@ -22,6 +22,14 @@ npm run db:studio    # Open Drizzle Studio
 npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.local
 ```
 
+## PWA / Icons
+
+- Favicon + browser tab icon: `<link rel="icon" href="/logo-icon.png">` — set via `icons.icon` in `layout.tsx` metadata
+- iOS home screen icon: `<link rel="apple-touch-icon" href="/logo-icon.png">` — set via `icons.apple` in `layout.tsx` metadata
+- iOS app title when saved to home screen: "Super League" — set via `appleWebApp.title` in `layout.tsx` metadata
+- Android home screen: `src/app/manifest.ts` — name/short_name = "Super League", icon = `/logo-icon.png` (500×500), theme_color = `#186732`, display = standalone
+- `logo-icon.png` lives in `/public/` (500×500 PNG); `src/app/icon.png` is a copy used as Next.js static metadata icon
+
 ## Architecture
 
 - All stats (W/L/T, leaderboard rankings, averages) computed at read time from raw score rows

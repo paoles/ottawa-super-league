@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   },
   description:
     "The official app for the Ottawa Super League golf league at The Meadows Golf & Country Club.",
+  appleWebApp: {
+    capable: true,
+    title: "Super League",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/logo-icon.png",
+    apple: "/logo-icon.png",
+  },
 };
 
 export default function RootLayout({
