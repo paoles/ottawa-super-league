@@ -43,7 +43,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-white">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo-icon.png" alt="OSL" className="h-9 w-9 object-contain" />
+          <img src="/logo-app.png" alt="OSL" className="h-9 w-9 object-contain" />
           <span className="hidden text-lg font-light text-foreground sm:inline">
             Ottawa Super League
           </span>
