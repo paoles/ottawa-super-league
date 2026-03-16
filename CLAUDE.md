@@ -24,11 +24,13 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 
 ## PWA / Icons
 
-- Favicon + browser tab icon: `<link rel="icon" href="/logo-icon.png">` — set via `icons.icon` in `layout.tsx` metadata
-- iOS home screen icon: `<link rel="apple-touch-icon" href="/logo-icon.png">` — set via `icons.apple` in `layout.tsx` metadata
+- Favicon + browser tab icon: `favicon-32x32.png` (32x32) + `logo-app.png` (500x500) — set via `icons.icon` array in `layout.tsx` metadata
+- iOS home screen icon: `apple-touch-icon.png` (180x180) — set via `icons.apple` in `layout.tsx` metadata
 - iOS app title when saved to home screen: "Super League" — set via `appleWebApp.title` in `layout.tsx` metadata
-- Android home screen: `src/app/manifest.ts` — name/short_name = "Super League", icon = `/logo-icon.png` (500×500), theme_color = `#186732`, display = standalone
-- `logo-icon.png` lives in `/public/` (500×500 PNG); `src/app/icon.png` is a copy used as Next.js static metadata icon
+- Android home screen: `src/app/manifest.ts` — name/short_name = "Super League", icons = `icon-192.png` (192x192) + `logo-app.png` (500x500), theme_color = `#186732`, display = standalone
+- Icon files in `/public/`: `logo-app.png` (500x500 source), `apple-touch-icon.png` (180x180), `icon-192.png` (192x192), `favicon-32x32.png` (32x32), `favicon-16x16.png` (16x16) — all generated from `logo-app.png` via sharp
+- `logo-icon.png` lives in `/public/` — nav header display logo (`header.tsx`), NOT used for favicon/PWA
+- No `src/app/icon.png` or `favicon.ico` — metadata `icons.icon` is the sole favicon source
 
 ## Architecture
 
