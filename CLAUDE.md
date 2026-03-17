@@ -186,6 +186,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Route: `/history`
 - Static page (no DB) — all champion data hardcoded in `page.tsx`
 - Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
+- **Past Seasons archive** (immediately below heading/divider): pill links for 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019); all open in a new tab; 2025 → old Google Sites page; 2024–2019 → Google Sheets
 - Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
 - `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift

@@ -18,7 +18,7 @@ const RULES_SECTIONS = [
       },
       {
         name: "Conceded Putts",
-        text: "A putt may be conceded by group consensus only. The ball must lie within one putter shaft length of the hole to be eligible for concession.",
+        text: "A putt may be conceded by a majority of the playing group (more than half in favour). The ball must lie within one putter shaft length of the hole to be eligible for concession. Conceded putts are not permitted during tournament rounds (e.g., M.Q. Invitational, O.S. Classic).",
       },
     ],
   },
