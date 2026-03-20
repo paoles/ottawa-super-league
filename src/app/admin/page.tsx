@@ -3,7 +3,8 @@ import { db } from "@/lib/db";
 import { players, scores } from "@/lib/db/schema";
 import { count } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, BarChart3 } from "lucide-react";
+import { Users, BarChart3, Download } from "lucide-react";
+import { CsvExportButton } from "@/components/shared/csv-export-button";
 
 export default async function AdminDashboardPage() {
   const [playerCount] = await db.select({ value: count() }).from(players);
@@ -44,6 +45,19 @@ export default async function AdminDashboardPage() {
           </Card>
         </Link>
       </div>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Data Export
+          </CardTitle>
+          <Download className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent className="flex gap-3">
+          <CsvExportButton type="scores" label="Export Scores" />
+          <CsvExportButton type="leaderboard" label="Export Leaderboard" />
+        </CardContent>
+      </Card>
     </div>
   );
 }

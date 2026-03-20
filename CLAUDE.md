@@ -57,7 +57,7 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Middleware (`src/middleware.ts`) protects `/admin/*` and `/api/admin/*` (except `/admin/login`)
 - Admin layout (`src/app/admin/layout.tsx`) is a client component — hides nav on `/admin/login`
 - Session cookie set directly on `NextResponse` in the login route handler (not via `cookies()` from next/headers)
-- Admin routes: `/admin` (dashboard), `/admin/players` (CRUD), `/admin/scores` (edit/delete)
+- Admin routes: `/admin` (dashboard with CSV export buttons), `/admin/players` (CRUD), `/admin/scores` (edit/delete)
 - Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
 - Player delete blocked if player has scores (409 Conflict)
 - Score edit recalculates handicap differential automatically
@@ -107,7 +107,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 ## Statistics Page Design
 
 - Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
-- Heading: "Statistics" in Dancing Script + green decorative divider; icon-only `CsvExportButton` (`iconOnly` prop) right-aligned using flex row with left `w-8` spacer to keep title centered
+- Heading: "Statistics" in Dancing Script + green decorative divider
 - `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
 - Course filter pills: `All | North | East | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles

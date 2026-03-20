@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScoreTrendsChart } from "./score-trends-chart";
 import { DistributionChart } from "./distribution-chart";
-import { CsvExportButton } from "@/components/shared/csv-export-button";
+
 import Link from "next/link";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
 import { COURSES } from "@/lib/constants";
@@ -88,18 +88,12 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       {/* Header */}
-      <div className="mb-0 flex items-center">
-        <div className="w-8" />
-        <h1
-          className="flex-1 text-center text-4xl font-bold text-primary"
-          style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
-        >
-          Statistics
-        </h1>
-        <div className="flex w-8 justify-end">
-          <CsvExportButton type="scores" label="Export Scores" iconOnly />
-        </div>
-      </div>
+      <h1
+        className="mb-0 text-center text-4xl font-bold text-primary"
+        style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
+      >
+        Statistics
+      </h1>
       <div className="mx-auto mt-3 mb-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/60" />
         <div className="h-1 w-12 rounded-full bg-primary" />
