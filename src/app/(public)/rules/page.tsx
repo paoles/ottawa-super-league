@@ -14,7 +14,7 @@ const RULES_SECTIONS = [
       },
       {
         name: "Round Declaration",
-        text: "Players must declare which nine-hole course they intend to play prior to teeing off. A round may not be retroactively excluded or amended once play has commenced.",
+        text: "Players must declare before the start of a round whether they are counting nine or eighteen holes. A round may not be retroactively shortened or excluded once play has commenced, unless an extraordinary circumstance forces a player to leave the course.",
       },
       {
         name: "Conceded Putts",
@@ -71,6 +71,10 @@ const RULES_SECTIONS = [
         text: "Win, Loss, and Tie results are determined per round date \u2014 the lowest score among all players competing on a given date and course is awarded the win. Tied low scores result in a tie for all players involved.",
       },
       {
+        name: "Tournament Tie-Break",
+        text: "If two or more players are tied at the conclusion of a tournament, the tie shall be broken by a putting competition held at the North/West putting green. Each player putts once toward a designated target, in rotation, without being able to observe the other players\u2019 putts. The player whose ball finishes closest to the target wins. The process only repeats if both players sink the putt.",
+      },
+      {
         name: "League Ranking",
         text: "Players must complete a minimum of ten (10) league rounds to receive an official numerical ranking. Players with fewer than ten rounds will appear on the leaderboard but remain unranked.",
       },
@@ -85,7 +89,7 @@ const RULES_SECTIONS = [
       },
       {
         name: "Social Membership",
-        text: "Social members participate under the same on-course rules and scoring system as full members. Social members do not hold voting rights at the AGM.",
+        text: "Full membership requires a $10 annual fee. Social members participate under the same on-course rules and scoring system as full members and are eligible to compete in and win all tournaments and events. Social members do not hold voting rights at the AGM.",
       },
       {
         name: "Commissioner Authority",
@@ -122,7 +126,7 @@ export default function RulesPage() {
 
       {/* Rule Sections */}
       <div className="mx-auto mt-8 max-w-3xl space-y-6">
-        {RULES_SECTIONS.map((section) => (
+        {RULES_SECTIONS.map((section, sectionIdx) => (
           <Card key={section.title} className="py-4">
             <CardHeader className="pb-0">
               <CardTitle>
@@ -138,10 +142,11 @@ export default function RulesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed">
-                {section.rules.map((rule) => (
-                  <li key={rule.name}>
-                    <strong>{rule.name}.</strong> {rule.text}
+              <ol className="list-none space-y-3 pl-0 text-sm leading-relaxed">
+                {section.rules.map((rule, ruleIdx) => (
+                  <li key={rule.name} className="flex gap-2">
+                    <span className="shrink-0 font-semibold text-sm tabular-nums">{sectionIdx + 1}.{ruleIdx + 1}</span>
+                    <span><strong>{rule.name}.</strong> {rule.text}</span>
                   </li>
                 ))}
               </ol>

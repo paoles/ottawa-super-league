@@ -159,10 +159,10 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - 4 section Cards stacked in `max-w-3xl` container with `space-y-6`:
   1. **General Play** (4 rules): Eligible Course, Eligible Tees, Round Declaration, Conceded Putts
   2. **Relief & Drops** (7 rules): OB/White Stakes, Lost Ball (3-min search), Red Penalty Areas, Obstruction Relief (Trees), Embedded Ball in Fairway Divot, Casual Water, General Drop Disputes
-  3. **Scoring & Rankings** (4 rules): Maximum Score (double par +1, excludes tournaments), Handicap Index formula, Match Results (W/L/T determination), League Ranking (10-round minimum)
-  4. **Governance** (3 rules): AGM voting, Social Membership (no voting rights), Commissioner Authority
+  3. **Scoring & Rankings** (5 rules): Maximum Score (double par +1, excludes tournaments), Handicap Index formula, Match Results (W/L/T determination), Tournament Tie-Break (putting competition at North/West green), League Ranking (10-round minimum)
+  4. **Governance** (3 rules): AGM voting, Social Membership ($10 annual fee for full membership, social can compete/win but no AGM vote), Commissioner Authority
 - Section titles: Dancing Script `text-2xl font-bold text-foreground` with `WebkitTextStroke: "0.6px currentColor"`
-- Rules: `<ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed">` with `<strong>` rule names
+- Rules: `<ol className="list-none">` with `flex gap-2` list items; number (`sectionIdx+1.ruleIdx+1`) in `shrink-0 font-semibold text-sm tabular-nums` span + content span; hierarchical numbering e.g. 1.1, 2.3
 - Footer note: `rounded-lg border bg-muted/40 px-4 py-3` with bolded "Note:" about amendment process
 - Imports: Card, CardHeader, CardTitle, CardContent from shadcn/ui
 
