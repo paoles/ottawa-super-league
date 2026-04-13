@@ -145,7 +145,7 @@ export default function RulesPage() {
               <ol className="list-none space-y-3 pl-0 text-sm leading-relaxed">
                 {section.rules.map((rule, ruleIdx) => (
                   <li key={rule.name} className="flex gap-2">
-                    <span className="shrink-0 font-semibold text-sm tabular-nums">{sectionIdx + 1}.{ruleIdx + 1}</span>
+                    <span className="shrink-0 text-sm tabular-nums leading-relaxed">{sectionIdx + 1}.{ruleIdx + 1}</span>
                     <span><strong>{rule.name}.</strong> {rule.text}</span>
                   </li>
                 ))}
