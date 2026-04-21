@@ -39,6 +39,7 @@
 
 ### Phase 4: Season Features
 - [ ] Season management (archive past seasons, start new)
+- [x] Per-player `is_active` flag: admin toggle in `/admin/players`, filters Input Score dropdown, historical pages unaffected; public `/api/players` POST lets anyone self-add a new player from the score form (defaults Social + Active)
 - [ ] Schedule / upcoming rounds page
 - [x] Player profile photos: static files in /public/players/, URLs stored in DB; 12/16 players have photos
 - [ ] Push notifications for new scores

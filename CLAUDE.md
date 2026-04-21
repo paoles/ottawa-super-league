@@ -19,6 +19,7 @@ npm run db:generate  # Generate Drizzle migrations
 npm run db:push      # Push schema to database
 npm run db:seed      # Seed database with Summer Tour 2025 data
 npm run db:studio    # Open Drizzle Studio
+npm run db:import-past  # Idempotent import of 2023/2024 data from Past Data.xlsx
 npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.local
 ```
 
@@ -38,13 +39,38 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Handicap differential stored per score record (computed at insert time, never changes)
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
 - ISR with 5-min revalidation on read pages
-- Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths
+- Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths (live pages if score belongs to `ACTIVE_SEASON`, otherwise the matching `/seasons/[year]/*` archive paths)
+- `players.is_active` boolean (default `true`) gates whether a player appears in the Input Score picker; inactive players keep their historical scores and remain visible on archive pages. Admins toggle manually per season from `/admin/players`. Schema: `integer("is_active", { mode: "boolean" }).notNull().default(true)`
+- **Self-serve player creation**: `/scores` step 3 has a dashed green "Can't find your name? Add a new player" button below the picker; opens a Dialog → POST `/api/players` (public, no auth) with `{ name }` → server forces `isSocial: true, isActive: true`, returns `{id, name}`; new player auto-selected in the form. `score-form.tsx` owns the players list in `useState` so additions appear immediately. `/api/players` POST revalidates `/scores` and `/admin/players`
 - Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
 - Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
 - Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
 - Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
 - Course tile order: North/East top row, West/South bottom row
 - Route groups: public pages in `src/app/(public)/` (Header/Footer layout), admin in `src/app/admin/` (AdminNav layout)
+
+## Seasons & Archives
+
+- Season is **derived from `roundDate`** (no schema column) — `YYYY-%` LIKE predicate via `seasonWhereClause(year)` in `src/lib/season.ts`
+- `ACTIVE_SEASON` constant (default **2026**, overridable via `process.env.ACTIVE_SEASON`); `ARCHIVED_SEASONS = [2025, 2024, 2023]`
+- Every exported function in `src/lib/stats.ts` accepts an optional `season?: number` (default `ACTIVE_SEASON`): `getLeaderboardData`, `getPlayerProfile`, `getPlayerHistory`, `getScoreTrends`, `getCourseBreakdowns`, `getScoreDistribution`, `getLeagueSummary`, `getPlayersWithStats`
+- `getLeaderboardData` excludes 0-GP rows (historical-only players don't appear on seasons where they didn't play); `getPlayersWithStats` also filters `gp > 0`
+- `getActivePlayerSlugs(season)` returns slugs with at least one score that season — used by `/players/[slug]` 404 check and by archive `generateStaticParams`
+- Archive routes mirror live pages under `/seasons/[year]/*`:
+  - `/seasons/[year]` — leaderboard (landing)
+  - `/seasons/[year]/statistics`
+  - `/seasons/[year]/players`
+  - `/seasons/[year]/players/[slug]`
+  - Shared `/seasons/[year]/layout.tsx` adds amber banner with season switcher pills + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
+- Component props for reusability:
+  - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`)
+  - `PlayerCard`: `hrefPrefix?: string` (default `/players`)
+  - `StatisticsClient`: `titleOverride?`, `playersHref?`
+  - `PlayerProfileClient`: `seasonLabel?`, `backHref?`
+- `/players/[slug]` 404s if active-season `gp === 0` (historical-only players reachable only via archive route)
+- Score mutation routes revalidate based on the score's year: live paths if `season === ACTIVE_SEASON`, else archive paths (admin PUT that moves a score between seasons revalidates both old and new)
+- Import pipeline: `scripts/import-past-data.ts` reads 2023/2024 sheets from `Past Data.xlsx`, normalizes Meadows N/E/S/W → North/East/South/West, resolves short names via per-sheet J/K alias column map, coerces out-of-year dates to the sheet's year, recomputes handicap via `calculateHandicapDiff()`, and is idempotent (deletes existing `LIKE '2023-%' OR '2024-%'` rows before re-inserting). `(Social)` suffix in alias column K sets `isSocial: true`
+- `/history` past-season pills: 2023/2024/2025 → internal `/seasons/{year}` (green pill style); 2022/2021/2020/2019 → external Google Sheets (bordered pill with `ExternalLink` icon, `target="_blank"`)
 
 ## Admin
 
@@ -61,6 +87,9 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
 - Player delete blocked if player has scores (409 Conflict)
 - Score edit recalculates handicap differential automatically
+- Admin Players list (`src/app/admin/players/page.tsx`) shows an "Active" switch column using `ActiveToggle` client component (`src/components/admin/active-toggle.tsx`) — inline PUT to `/api/admin/players/[id]` with the full payload; inactive rows render at `opacity-60` with an "Inactive" badge alongside the Social badge
+- `PlayerForm` (`src/components/admin/player-form.tsx`) has an "Active this season" switch on create/edit; `playerCreateSchema` / `playerUpdateSchema` in `src/lib/validations.ts` both require `isActive: boolean`
+- Public `/api/players` route: GET returns `{id, name}[]`; POST accepts `{ name }` (validated by `publicPlayerCreateSchema`), no auth, always creates as Social + Active
 
 ## Security
 
@@ -94,6 +123,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Players with 10+ games played receive a numeric rank
 - Players with <10 GP are shown but unranked (rank displays as "—")
 - "(Social)" is an admin-managed tag; social players are ranked the same as regular players
+- "Active" is an admin-managed per-player flag; controls visibility in the Input Score picker only. Does **not** affect leaderboard/stats/archive pages (those still use score presence). Manually re-toggled each season; new players created from the public score form are Active + Social by default
 - Unique constraint: one score per player per course per date
 
 ## Conventions
@@ -186,7 +216,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Route: `/history`
 - Static page (no DB) — all champion data hardcoded in `page.tsx`
 - Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
-- **Past Seasons archive** (immediately below heading/divider): pill links for 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019); all open in a new tab; 2025 → old Google Sites page; 2024–2019 → Google Sheets
+- **Past Seasons archive** (immediately below heading/divider): pill links for 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries have `external: boolean` flag — 2023/2024/2025 render as `<Link>` to internal `/seasons/{year}` (filled green pill, no icon); 2019–2022 render as `<a target="_blank">` to Google Sheets (bordered pill with `ExternalLink` icon)
 - Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
 - `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift

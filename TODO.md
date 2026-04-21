@@ -15,6 +15,7 @@
 - [ ] Push notifications for new scores
 
 ## Done
+- [x] Per-player `is_active` flag: admin toggle on `/admin/players`, filters Input Score dropdown, keeps archive intact; public `/api/players` POST lets anyone add a new player (defaults Social + Active) from step 3 of the score form
 - [x] Homepage hero: Landscape.png background image with white/70 overlay behind OSL logo
 - [x] Player profile redesign: course filter pills, color-coded stats, course breakdown tiles, score distribution, sortable round history, back button, score history trendline
 - [x] Score Trends chart: responsive (mobile = league avg only, desktop = individual lines + league avg)
