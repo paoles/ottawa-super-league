@@ -21,6 +21,8 @@ npm run db:seed      # Seed database with Summer Tour 2025 data
 npm run db:studio    # Open Drizzle Studio
 npm run db:import-past  # Idempotent import of 2023/2024 data from Past Data.xlsx
 npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.local
+npx tsx scripts/migrate-add-is-active.ts     # Idempotent ALTER — reads TURSO_* from env (pattern for future migrations)
+npx vercel env pull .env.vercel.production --environment=production  # Pull prod env vars (file is gitignored; rm when done)
 ```
 
 ## PWA / Icons
@@ -90,6 +92,29 @@ npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.loc
 - Admin Players list (`src/app/admin/players/page.tsx`) shows an "Active" switch column using `ActiveToggle` client component (`src/components/admin/active-toggle.tsx`) — inline PUT to `/api/admin/players/[id]` with the full payload; inactive rows render at `opacity-60` with an "Inactive" badge alongside the Social badge
 - `PlayerForm` (`src/components/admin/player-form.tsx`) has an "Active this season" switch on create/edit; `playerCreateSchema` / `playerUpdateSchema` in `src/lib/validations.ts` both require `isActive: boolean`
 - Public `/api/players` route: GET returns `{id, name}[]`; POST accepts `{ name }` (validated by `publicPlayerCreateSchema`), no auth, always creates as Social + Active
+
+## Production & Deployment
+
+- Hosted on Vercel (project `ottawa-super-league`, team `paoles-projects-259efc15`, project ID in `.vercel/project.json`); domain `ottawasuperleague.vip` + `www.ottawasuperleague.vip`; region `iad1`
+- Production DB: Turso cloud (`libsql://ottawa-super-league-paoles.aws-us-east-2.turso.io`); env vars `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` + `ADMIN_PASSWORD_HASH` + `ADMIN_SESSION_SECRET` set on Vercel production
+- `.env.local` points at the local SQLite file (`file:./data/osl.db`); to run scripts against prod Turso, pull prod env first:
+  ```bash
+  npx vercel env pull .env.vercel.production --environment=production
+  export $(grep -E "^TURSO_(DATABASE_URL|AUTH_TOKEN)=" .env.vercel.production | sed 's/"//g' | xargs -d '\n')
+  # run your script
+  rm .env.vercel.production
+  ```
+  The pulled file is gitignored but ALWAYS delete it when done.
+- **Schema migrations to Turso**: `drizzle-kit push` doesn't load `.env.local`, and pushing silently can diverge dev from prod. Use ad-hoc idempotent `@libsql/client` scripts that PRAGMA-check before altering — `scripts/migrate-add-is-active.ts` is the canonical pattern (reads `PRAGMA table_info(<table>)`, no-ops if the column is already there, safe to re-run). Dev + prod must both get the migration; forgetting prod = build failure (`SQL_INPUT_ERROR: no such column: ...`)
+- **Prerender-before-data gotcha**: `/seasons/[year]/*` uses `generateStaticParams` + `revalidate = 300`, so archive HTML is baked at build time against whatever Turso has AT THE MOMENT the build runs. If you push code → build completes → *then* import data, archive pages stay empty until a fresh rebuild. After any data import against prod, push an empty commit (`git commit --allow-empty -m "trigger rebuild"`) so Vercel re-prerenders
+- **Canonical deployment order for schema-changing + data-importing releases**:
+  1. Run the ALTER TABLE migration against prod Turso (pulled env + idempotent script)
+  2. `git push` — Vercel build will now find the schema it expects
+  3. Wait for build READY
+  4. Run the data import against prod Turso (`TURSO_*= npm run db:import-past`)
+  5. `git commit --allow-empty -m "trigger rebuild" && git push` — re-prerenders archive pages with the imported data
+  6. Delete the pulled env file
+- Verify prod data landed with a direct curl probe before assuming ISR caught up: `curl -sL https://ottawasuperleague.vip/seasons/2024 | grep -oE "Kevin Slack|No rounds recorded"` — the latter string means the HTML still has the empty-state baked in
 
 ## Security
 
