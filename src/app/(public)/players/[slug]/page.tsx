@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { PlayerProfileClient } from "@/components/players/player-profile-client";
-import { getPlayerProfile, getPlayerHistory, getAllPlayerSlugs } from "@/lib/stats";
+import { getPlayerProfile, getPlayerHistory, getActivePlayerSlugs } from "@/lib/stats";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  const slugs = await getAllPlayerSlugs();
+  const slugs = await getActivePlayerSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
@@ -33,7 +33,7 @@ export default async function PlayerProfilePage({
     getPlayerHistory(slug),
   ]);
 
-  if (!profile) notFound();
+  if (!profile || profile.gp === 0) notFound();
 
   return <PlayerProfileClient profile={profile} history={history} />;
 }

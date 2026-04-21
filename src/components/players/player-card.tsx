@@ -16,6 +16,7 @@ interface PlayerCardPlayer {
 
 interface PlayerCardProps {
   player: PlayerCardPlayer;
+  hrefPrefix?: string;
 }
 
 function getInitials(name: string): string {
@@ -27,11 +28,11 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function PlayerCard({ player }: PlayerCardProps) {
+export function PlayerCard({ player, hrefPrefix = "/players" }: PlayerCardProps) {
   const { name, slug, isSocial, photoUrl, gp, strokeAvg, hdcpAvg, rank } = player;
 
   return (
-    <Link href={`/players/${slug}`}>
+    <Link href={`${hrefPrefix}/${slug}`}>
       <Card className="relative py-0 shadow-md transition-shadow hover:shadow-lg h-full">
         {isSocial && (
           <span className="absolute top-2 right-2 z-10 rounded border border-gray-300 bg-gray-100 px-1 py-px text-[11px] font-medium text-gray-600">

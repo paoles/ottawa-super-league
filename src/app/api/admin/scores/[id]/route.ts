@@ -6,6 +6,23 @@ import { eq } from "drizzle-orm";
 import { scoreUpdateSchema } from "@/lib/validations";
 import { calculateHandicapDiff } from "@/lib/handicap";
 import type { Course, Tee } from "@/lib/constants";
+import { ACTIVE_SEASON, isArchivedSeason } from "@/lib/season";
+
+function revalidateSeason(season: number, playerSlug?: string) {
+  const isActive = season === ACTIVE_SEASON;
+  if (isActive) {
+    revalidatePath("/");
+    revalidatePath("/leaderboard");
+    revalidatePath("/statistics");
+    revalidatePath("/players");
+    if (playerSlug) revalidatePath(`/players/${playerSlug}`);
+  } else if (isArchivedSeason(season)) {
+    revalidatePath(`/seasons/${season}`);
+    revalidatePath(`/seasons/${season}/statistics`);
+    revalidatePath(`/seasons/${season}/players`);
+    if (playerSlug) revalidatePath(`/seasons/${season}/players/${playerSlug}`);
+  }
+}
 
 export async function PUT(
   request: Request,
@@ -35,6 +52,11 @@ export async function PUT(
       tee as Tee
     );
 
+    const [existing] = await db
+      .select({ roundDate: scores.roundDate })
+      .from(scores)
+      .where(eq(scores.id, scoreId));
+
     const [updated] = await db
       .update(scores)
       .set({ roundDate, course, tee, score, handicapDiff })
@@ -45,20 +67,15 @@ export async function PUT(
       return NextResponse.json({ error: "Score not found" }, { status: 404 });
     }
 
-    // Revalidate affected pages
-    revalidatePath("/");
-    revalidatePath("/leaderboard");
-    revalidatePath("/statistics");
-    revalidatePath("/players");
-
     const [player] = await db
       .select({ slug: players.slug })
       .from(players)
       .where(eq(players.id, updated.playerId));
 
-    if (player) {
-      revalidatePath(`/players/${player.slug}`);
-    }
+    const newSeason = parseInt(roundDate.slice(0, 4), 10);
+    const oldSeason = existing ? parseInt(existing.roundDate.slice(0, 4), 10) : newSeason;
+    revalidateSeason(newSeason, player?.slug);
+    if (oldSeason !== newSeason) revalidateSeason(oldSeason, player?.slug);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -81,25 +98,19 @@ export async function DELETE(
     const [deleted] = await db
       .delete(scores)
       .where(eq(scores.id, scoreId))
-      .returning({ playerId: scores.playerId });
+      .returning({ playerId: scores.playerId, roundDate: scores.roundDate });
 
     if (!deleted) {
       return NextResponse.json({ error: "Score not found" }, { status: 404 });
     }
-
-    revalidatePath("/");
-    revalidatePath("/leaderboard");
-    revalidatePath("/statistics");
-    revalidatePath("/players");
 
     const [player] = await db
       .select({ slug: players.slug })
       .from(players)
       .where(eq(players.id, deleted.playerId));
 
-    if (player) {
-      revalidatePath(`/players/${player.slug}`);
-    }
+    const season = parseInt(deleted.roundDate.slice(0, 4), 10);
+    revalidateSeason(season, player?.slug);
 
     return NextResponse.json({ success: true });
   } catch (error) {

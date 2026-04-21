@@ -42,9 +42,16 @@ const SORT_LABELS: Record<SortKey, string> = {
 interface PlayerProfileClientProps {
   profile: PlayerProfile;
   history: PlayerRound[];
+  seasonLabel?: string;
+  backHref?: string;
 }
 
-export function PlayerProfileClient({ profile, history }: PlayerProfileClientProps) {
+export function PlayerProfileClient({
+  profile,
+  history,
+  seasonLabel,
+  backHref,
+}: PlayerProfileClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
   const [sortKey, setSortKey] = useState<SortKey>("roundDate");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -115,7 +122,11 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
       {/* Header */}
       <div className="mb-6 flex items-center gap-4">
         <button
-          onClick={() => window.history.length > 1 ? router.back() : router.push('/players')}
+          onClick={() =>
+            window.history.length > 1
+              ? router.back()
+              : router.push(backHref ?? "/players")
+          }
           className="flex h-16 w-9 shrink-0 items-center justify-center rounded-2xl border-2 border-orange-400 text-orange-500 transition-colors hover:border-orange-500 hover:bg-orange-50 hover:text-orange-600"
           aria-label="Go back"
         >
@@ -147,6 +158,7 @@ export function PlayerProfileClient({ profile, history }: PlayerProfileClientPro
           <p className="text-sm text-muted-foreground">
             {profile.rank ? `Rank #${profile.rank}` : "Unranked"} &middot;{" "}
             {profile.gp} rounds played
+            {seasonLabel ? ` · ${seasonLabel}` : ""}
           </p>
         </div>
       </div>
