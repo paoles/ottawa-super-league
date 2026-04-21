@@ -17,6 +17,16 @@ export default async function PlayersPage() {
   // Sort alphabetically
   const sorted = [...players].sort((a, b) => a.name.localeCompare(b.name));
 
+  const browsePastSeasons = (
+    <Link
+      href="/history"
+      className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+    >
+      <Archive className="h-4 w-4" />
+      Browse past seasons
+    </Link>
+  );
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <h1
@@ -40,20 +50,19 @@ export default async function PlayersPage() {
               This roster fills in as rounds are submitted for the season.
             </p>
           </div>
-          <Link
-            href="/history"
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-          >
-            <Archive className="h-4 w-4" />
-            Browse past seasons
-          </Link>
+          {browsePastSeasons}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {sorted.map((player) => (
-            <PlayerCard key={player.id} player={player} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {sorted.map((player) => (
+              <PlayerCard key={player.id} player={player} />
+            ))}
+          </div>
+          <div className="mt-8 flex justify-center">
+            {browsePastSeasons}
+          </div>
+        </>
       )}
     </div>
   );

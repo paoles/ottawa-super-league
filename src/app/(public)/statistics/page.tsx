@@ -1,5 +1,6 @@
 import { StatisticsClient } from "@/components/statistics/statistics-client";
 import { getScoreTrends, getCourseBreakdowns } from "@/lib/stats";
+import { ARCHIVED_SEASONS } from "@/lib/season";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default async function StatisticsPage() {
     <StatisticsClient
       trends={trends}
       courseBreakdowns={courseBreakdowns}
-      showHistoryLink
+      archivedSeasons={ARCHIVED_SEASONS}
     />
   );
 }

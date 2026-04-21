@@ -6,6 +6,7 @@ import { ScoreTrendsChart } from "./score-trends-chart";
 import { DistributionChart } from "./distribution-chart";
 
 import Link from "next/link";
+import { Trophy, Users } from "lucide-react";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
 import { COURSES } from "@/lib/constants";
 
@@ -14,7 +15,8 @@ interface StatisticsClientProps {
   courseBreakdowns: CourseBreakdown[];
   titleOverride?: string;
   playersHref?: string;
-  showHistoryLink?: boolean;
+  archivedSeasons?: readonly number[];
+  archiveSectionLinks?: { leaderboardHref: string; playersHref: string; year: number };
 }
 
 const COURSE_COLORS: Record<string, string> = {
@@ -54,7 +56,8 @@ export function StatisticsClient({
   courseBreakdowns,
   titleOverride,
   playersHref = "/players",
-  showHistoryLink = false,
+  archivedSeasons,
+  archiveSectionLinks,
 }: StatisticsClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
 
@@ -182,7 +185,7 @@ export function StatisticsClient({
       )}
 
       {/* Players CTA */}
-      <Card className="mb-3 border-[#186732]/30 bg-[#186732]/5 py-0">
+      <Card className="mb-6 border-[#186732]/30 bg-[#186732]/5 py-0">
         <CardContent className="flex flex-row items-center justify-between gap-2 px-3 py-2.5">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">Looking for individual stats?</p>
@@ -192,30 +195,10 @@ export function StatisticsClient({
             href={playersHref}
             className="shrink-0 rounded-md bg-[#186732] px-4 py-2 text-center text-xs font-medium text-white hover:bg-[#186732]/90 leading-snug"
           >
-            Player Profiles →
+            Player Profiles &rarr;
           </Link>
         </CardContent>
       </Card>
-
-      {/* History CTA */}
-      {showHistoryLink && (
-        <Card className="mb-8 border-[#186732]/30 bg-[#186732]/5 py-0">
-          <CardContent className="flex flex-row items-center justify-between gap-2 px-3 py-2.5">
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium">Looking for prior year stats?</p>
-              <p className="text-xs text-muted-foreground">Past seasons &amp; tournament champions.</p>
-            </div>
-            <Link
-              href="/history"
-              className="shrink-0 rounded-md bg-[#186732] px-4 py-2 text-center text-xs font-medium text-white hover:bg-[#186732]/90 leading-snug"
-            >
-              Our History &rarr;
-            </Link>
-          </CardContent>
-        </Card>
-      )}
-
-      {!showHistoryLink && <div className="mb-5" />}
 
       {/* Score Trends */}
       <Card className="mb-8">
@@ -323,6 +306,40 @@ export function StatisticsClient({
       <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-center text-sm text-foreground">
         Use the <span className="font-medium">course filters at the top</span> to narrow all results by course.
       </div>
+
+      {/* Archive cross-links: shown on archive stats pages (leaderboard + players for this year) */}
+      {archiveSectionLinks && (
+        <div className="mt-6 flex flex-col items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-wrap justify-center gap-2">
+            <Link
+              href={archiveSectionLinks.leaderboardHref}
+              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+            >
+              <Trophy className="h-4 w-4" />
+              {archiveSectionLinks.year} Leaderboard
+            </Link>
+            <Link
+              href={archiveSectionLinks.playersHref}
+              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+            >
+              <Users className="h-4 w-4" />
+              {archiveSectionLinks.year} Players
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Browse past seasons link: shown on the live stats page */}
+      {archivedSeasons && archivedSeasons.length > 0 && (
+        <div className="mt-6 flex justify-center">
+          <Link
+            href="/history"
+            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+          >
+            Browse past seasons
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

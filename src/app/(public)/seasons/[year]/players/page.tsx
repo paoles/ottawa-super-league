@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { PlayerCard } from "@/components/players/player-card";
 import { getPlayersWithStats } from "@/lib/stats";
 import { ARCHIVED_SEASONS } from "@/lib/season";
+import { Trophy, BarChart2 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
@@ -59,6 +61,25 @@ export default async function SeasonPlayersPage({
           ))}
         </div>
       )}
+
+      <div className="mt-8 flex flex-col items-center gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-wrap justify-center gap-2">
+          <Link
+            href={`/seasons/${year}`}
+            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+          >
+            <Trophy className="h-4 w-4" />
+            {year} Leaderboard
+          </Link>
+          <Link
+            href={`/seasons/${year}/statistics`}
+            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+          >
+            <BarChart2 className="h-4 w-4" />
+            {year} Statistics
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

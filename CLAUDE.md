@@ -63,11 +63,12 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
   - `/seasons/[year]/statistics`
   - `/seasons/[year]/players`
   - `/seasons/[year]/players/[slug]`
-  - Shared `/seasons/[year]/layout.tsx` adds amber banner with season switcher pills + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
+  - Shared `/seasons/[year]/layout.tsx` adds amber banner ("{year} Season Archive" label) with season switcher dropdown + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
+  - Each archive page has footer cross-navigation pills linking to the other two sections for the same year (e.g. archive leaderboard → Statistics + Players; archive statistics → Leaderboard + Players; archive players → Leaderboard + Statistics); pill labels include the year (e.g. "2025 Leaderboard")
 - Component props for reusability:
   - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`)
   - `PlayerCard`: `hrefPrefix?: string` (default `/players`)
-  - `StatisticsClient`: `titleOverride?`, `playersHref?`
+  - `StatisticsClient`: `titleOverride?`, `playersHref?`, `archivedSeasons?` (shows "Browse past seasons" → `/history` on live page), `archiveSectionLinks?: { leaderboardHref, playersHref, year }` (shows year-labeled Leaderboard + Players pills on archive pages)
   - `PlayerProfileClient`: `seasonLabel?`, `backHref?`
 - `/players/[slug]` 404s if active-season `gp === 0` (historical-only players reachable only via archive route)
 - Score mutation routes revalidate based on the score's year: live paths if `season === ACTIVE_SEASON`, else archive paths (admin PUT that moves a score between seasons revalidates both old and new)
@@ -167,9 +168,10 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Course filter pills: `All | North | East | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
 - Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
-- Player profiles CTA (compact single-row card, `py-2.5`) appears after summary cards, links to `/players`
-- Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note
+- Player profiles CTA (compact single-row card, `py-2.5`, `mb-6`) appears after summary cards, links to `/players`
+- Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note → archive navigation
 - Footer note: styled box (`rounded-lg border bg-muted/40 px-4 py-3`) with bolded "course filters at the top"
+- After footer note: live page shows a "Browse past seasons" pill → `/history`; archive pages show year-labeled "Leaderboard" + "Players" cross-link pills via `archiveSectionLinks` prop
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
 - Course Breakdown: 4 tiles (2x2 → 4-col), sorted easiest→hardest by avg score; shows avg score + best round + total rounds; visible on "All" only
 - Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Score Trends Y-axis

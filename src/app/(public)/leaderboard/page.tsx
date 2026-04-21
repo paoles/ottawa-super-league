@@ -52,6 +52,13 @@ export default async function LeaderboardPage() {
               <BarChart2 className="h-4 w-4" />
               View full league statistics
             </Link>
+            <Link
+              href="/history"
+              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+            >
+              <Archive className="h-4 w-4" />
+              Browse past seasons
+            </Link>
           </div>
         </>
       ) : (

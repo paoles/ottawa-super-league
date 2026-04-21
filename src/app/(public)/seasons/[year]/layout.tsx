@@ -21,10 +21,7 @@ export default async function SeasonArchiveLayout({
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm">
           <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
             <Archive className="h-4 w-4 shrink-0" />
-            <span className="font-medium">{year} season archive</span>
-            <span className="hidden text-amber-700/80 sm:inline dark:text-amber-300/70">
-              &middot; read-only past-season view
-            </span>
+            <span className="font-medium">{year} Season Archive</span>
           </div>
           <div className="flex items-center gap-3 text-xs">
             <SeasonSwitcher current={year} />
