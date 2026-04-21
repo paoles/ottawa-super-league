@@ -35,11 +35,13 @@ export function PlayerForm({
     defaultValues: {
       name: defaultValues?.name ?? "",
       isSocial: defaultValues?.isSocial ?? false,
+      isActive: defaultValues?.isActive ?? true,
       photoUrl: defaultValues?.photoUrl ?? "",
     },
   });
 
   const isSocial = watch("isSocial");
+  const isActive = watch("isActive");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -70,6 +72,20 @@ export function PlayerForm({
           onCheckedChange={(checked) => setValue("isSocial", checked)}
         />
         <Label htmlFor="isSocial">Social Player</Label>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Switch
+          id="isActive"
+          checked={isActive}
+          onCheckedChange={(checked) => setValue("isActive", checked)}
+        />
+        <Label htmlFor="isActive">
+          Active this season{" "}
+          <span className="text-xs text-muted-foreground">
+            (shown in Input Score)
+          </span>
+        </Label>
       </div>
 
       <Button type="submit" disabled={isLoading} className="w-full">

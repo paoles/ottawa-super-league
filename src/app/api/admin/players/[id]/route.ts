@@ -40,7 +40,7 @@ export async function PUT(
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
 
-    const { name, isSocial, photoUrl } = parsed.data;
+    const { name, isSocial, isActive, photoUrl } = parsed.data;
     const newSlug = toSlug(name);
 
     await db
@@ -49,6 +49,7 @@ export async function PUT(
         name,
         slug: newSlug,
         isSocial,
+        isActive,
         photoUrl: photoUrl || null,
       })
       .where(eq(players.id, playerId));
@@ -59,6 +60,7 @@ export async function PUT(
       revalidatePath(`/players/${newSlug}`);
     }
     revalidatePath("/");
+    revalidatePath("/scores");
 
     return NextResponse.json({ success: true, slug: newSlug });
   } catch (error: unknown) {

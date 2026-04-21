@@ -35,6 +35,7 @@ export default async function EditPlayerPage({
             defaultValues={{
               name: player.name,
               isSocial: player.isSocial,
+              isActive: player.isActive,
               photoUrl: player.photoUrl ?? "",
             }}
           />

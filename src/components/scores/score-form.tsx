@@ -28,10 +28,11 @@ export interface FormData {
 const TOTAL_STEPS = 5;
 const STEP_LABELS = ["Date", "Course", "Players", "Scores", "Review"];
 
-export function ScoreForm({ players }: ScoreFormProps) {
+export function ScoreForm({ players: initialPlayers }: ScoreFormProps) {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [players, setPlayers] = useState<PlayerOption[]>(initialPlayers);
 
   const [formData, setFormData] = useState<FormData>({
     roundDate: new Date().toISOString().slice(0, 10),
@@ -180,6 +181,13 @@ export function ScoreForm({ players }: ScoreFormProps) {
               players={players}
               selected={formData.selectedPlayers}
               tees={formData.tees}
+              onPlayerCreated={(player) =>
+                setPlayers((ps) =>
+                  ps.some((p) => p.id === player.id)
+                    ? ps
+                    : [...ps, player].sort((a, b) => a.name.localeCompare(b.name))
+                )
+              }
               onPlayerAdd={(player) =>
                 setFormData((d) => {
                   const tees = new Map(d.tees);

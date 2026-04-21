@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { players, scores } from "@/lib/db/schema";
-import { asc } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { ScoreForm } from "@/components/scores/score-form";
 import type { Metadata } from "next";
 
@@ -12,6 +12,7 @@ export default async function ScoresPage() {
   const allPlayers = await db
     .select({ id: players.id, name: players.name })
     .from(players)
+    .where(eq(players.isActive, true))
     .orderBy(asc(players.name));
 
   const allScores = await db

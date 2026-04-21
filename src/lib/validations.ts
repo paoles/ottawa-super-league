@@ -20,10 +20,15 @@ export type ScoreSubmission = z.infer<typeof scoreSubmissionSchema>;
 export const playerCreateSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   isSocial: z.boolean(),
+  isActive: z.boolean(),
   photoUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
 });
 
 export const playerUpdateSchema = playerCreateSchema;
+
+export const publicPlayerCreateSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+});
 
 export const scoreUpdateSchema = z.object({
   roundDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),

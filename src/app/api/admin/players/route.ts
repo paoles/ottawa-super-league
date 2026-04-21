@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, isSocial, photoUrl } = parsed.data;
+    const { name, isSocial, isActive, photoUrl } = parsed.data;
     const slug = toSlug(name);
 
     const result = await db
@@ -29,12 +29,14 @@ export async function POST(request: Request) {
         name,
         slug,
         isSocial,
+        isActive,
         photoUrl: photoUrl || null,
       })
       .returning({ id: players.id });
 
     revalidatePath("/players");
     revalidatePath("/");
+    revalidatePath("/scores");
 
     return NextResponse.json({ success: true, id: result[0].id, slug });
   } catch (error: unknown) {
