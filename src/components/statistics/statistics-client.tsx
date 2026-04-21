@@ -12,6 +12,9 @@ import { COURSES } from "@/lib/constants";
 interface StatisticsClientProps {
   trends: ScoreTrendPoint[];
   courseBreakdowns: CourseBreakdown[];
+  titleOverride?: string;
+  playersHref?: string;
+  showHistoryLink?: boolean;
 }
 
 const COURSE_COLORS: Record<string, string> = {
@@ -46,7 +49,13 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientProps) {
+export function StatisticsClient({
+  trends,
+  courseBreakdowns,
+  titleOverride,
+  playersHref = "/players",
+  showHistoryLink = false,
+}: StatisticsClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
 
   const filteredTrends = useMemo(
@@ -92,7 +101,7 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
         className="mb-0 text-center text-4xl font-bold text-primary"
         style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
       >
-        Statistics
+        {titleOverride ?? "Statistics"}
       </h1>
       <div className="mx-auto mt-3 mb-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/60" />
@@ -121,6 +130,12 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
           </button>
         ))}
       </div>
+
+      {trends.length === 0 && (
+        <div className="mb-6 rounded-lg border bg-muted/30 px-6 py-10 text-center text-muted-foreground">
+          No rounds recorded yet.
+        </div>
+      )}
 
       {/* Summary cards */}
       {summaryStats && (
@@ -167,20 +182,40 @@ export function StatisticsClient({ trends, courseBreakdowns }: StatisticsClientP
       )}
 
       {/* Players CTA */}
-      <Card className="mb-8 border-[#186732]/30 bg-[#186732]/5 py-0">
+      <Card className="mb-3 border-[#186732]/30 bg-[#186732]/5 py-0">
         <CardContent className="flex flex-row items-center justify-between gap-2 px-3 py-2.5">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">Looking for individual stats?</p>
             <p className="text-xs text-muted-foreground">Player summary &amp; round history.</p>
           </div>
           <Link
-            href="/players"
+            href={playersHref}
             className="shrink-0 rounded-md bg-[#186732] px-4 py-2 text-center text-xs font-medium text-white hover:bg-[#186732]/90 leading-snug"
           >
             Player Profiles →
           </Link>
         </CardContent>
       </Card>
+
+      {/* History CTA */}
+      {showHistoryLink && (
+        <Card className="mb-8 border-[#186732]/30 bg-[#186732]/5 py-0">
+          <CardContent className="flex flex-row items-center justify-between gap-2 px-3 py-2.5">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">Looking for prior year stats?</p>
+              <p className="text-xs text-muted-foreground">Past seasons &amp; tournament champions.</p>
+            </div>
+            <Link
+              href="/history"
+              className="shrink-0 rounded-md bg-[#186732] px-4 py-2 text-center text-xs font-medium text-white hover:bg-[#186732]/90 leading-snug"
+            >
+              Our History &rarr;
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      {!showHistoryLink && <div className="mb-5" />}
 
       {/* Score Trends */}
       <Card className="mb-8">

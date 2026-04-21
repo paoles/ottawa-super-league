@@ -14,5 +14,11 @@ export default async function StatisticsPage() {
     getCourseBreakdowns(),
   ]);
 
-  return <StatisticsClient trends={trends} courseBreakdowns={courseBreakdowns} />;
+  return (
+    <StatisticsClient
+      trends={trends}
+      courseBreakdowns={courseBreakdowns}
+      showHistoryLink
+    />
+  );
 }
