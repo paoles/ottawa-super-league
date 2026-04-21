@@ -6,7 +6,7 @@ import { ScoreTrendsChart } from "./score-trends-chart";
 import { DistributionChart } from "./distribution-chart";
 
 import Link from "next/link";
-import { Trophy, Users } from "lucide-react";
+import { Archive, BookOpen } from "lucide-react";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
 import { COURSES } from "@/lib/constants";
 
@@ -16,7 +16,6 @@ interface StatisticsClientProps {
   titleOverride?: string;
   playersHref?: string;
   archivedSeasons?: readonly number[];
-  archiveSectionLinks?: { leaderboardHref: string; playersHref: string; year: number };
 }
 
 const COURSE_COLORS: Record<string, string> = {
@@ -57,7 +56,6 @@ export function StatisticsClient({
   titleOverride,
   playersHref = "/players",
   archivedSeasons,
-  archiveSectionLinks,
 }: StatisticsClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
 
@@ -307,36 +305,22 @@ export function StatisticsClient({
         Use the <span className="font-medium">course filters at the top</span> to narrow all results by course.
       </div>
 
-      {/* Archive cross-links: shown on archive stats pages (leaderboard + players for this year) */}
-      {archiveSectionLinks && (
-        <div className="mt-6 flex flex-col items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex flex-wrap justify-center gap-2">
-            <Link
-              href={archiveSectionLinks.leaderboardHref}
-              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
-            >
-              <Trophy className="h-4 w-4" />
-              {archiveSectionLinks.year} Leaderboard
-            </Link>
-            <Link
-              href={archiveSectionLinks.playersHref}
-              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
-            >
-              <Users className="h-4 w-4" />
-              {archiveSectionLinks.year} Players
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Browse past seasons link: shown on the live stats page */}
+      {/* Archive + history links: shown on the live stats page */}
       {archivedSeasons && archivedSeasons.length > 0 && (
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            href="/seasons/2025"
+            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+          >
+            <Archive className="h-4 w-4" />
+            Browse Archive
+          </Link>
           <Link
             href="/history"
             className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
           >
-            Browse past seasons
+            <BookOpen className="h-4 w-4" />
+            Our History
           </Link>
         </div>
       )}

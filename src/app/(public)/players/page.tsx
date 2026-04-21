@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Archive } from "lucide-react";
+import { Archive, BookOpen } from "lucide-react";
 import { PlayerCard } from "@/components/players/player-card";
 import { getPlayersWithStats } from "@/lib/stats";
 import { ACTIVE_SEASON } from "@/lib/season";
@@ -17,14 +17,23 @@ export default async function PlayersPage() {
   // Sort alphabetically
   const sorted = [...players].sort((a, b) => a.name.localeCompare(b.name));
 
-  const browsePastSeasons = (
-    <Link
-      href="/history"
-      className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-    >
-      <Archive className="h-4 w-4" />
-      Browse past seasons
-    </Link>
+  const archiveLinks = (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <Link
+        href="/seasons/2025"
+        className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+      >
+        <Archive className="h-4 w-4" />
+        Browse Archive
+      </Link>
+      <Link
+        href="/history"
+        className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+      >
+        <BookOpen className="h-4 w-4" />
+        Our History
+      </Link>
+    </div>
   );
 
   return (
@@ -50,7 +59,7 @@ export default async function PlayersPage() {
               This roster fills in as rounds are submitted for the season.
             </p>
           </div>
-          {browsePastSeasons}
+          {archiveLinks}
         </div>
       ) : (
         <>
@@ -60,7 +69,7 @@ export default async function PlayersPage() {
             ))}
           </div>
           <div className="mt-8 flex justify-center">
-            {browsePastSeasons}
+            {archiveLinks}
           </div>
         </>
       )}

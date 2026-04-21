@@ -3,7 +3,7 @@ import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
 import { getLeaderboardData } from "@/lib/stats";
 import { ACTIVE_SEASON } from "@/lib/season";
 import Link from "next/link";
-import { Archive, BarChart2, User } from "lucide-react";
+import { Archive, BarChart2, BookOpen, User } from "lucide-react";
 
 export const revalidate = 300;
 
@@ -52,13 +52,22 @@ export default async function LeaderboardPage() {
               <BarChart2 className="h-4 w-4" />
               View full league statistics
             </Link>
-            <Link
-              href="/history"
-              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
-            >
-              <Archive className="h-4 w-4" />
-              Browse past seasons
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/seasons/2025"
+                className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+              >
+                <Archive className="h-4 w-4" />
+                Browse Archive
+              </Link>
+              <Link
+                href="/history"
+                className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
+              >
+                <BookOpen className="h-4 w-4" />
+                Our History
+              </Link>
+            </div>
           </div>
         </>
       ) : (
@@ -71,13 +80,22 @@ export default async function LeaderboardPage() {
               Standings will appear here as scores are submitted.
             </p>
           </div>
-          <Link
-            href="/history"
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-          >
-            <Archive className="h-4 w-4" />
-            Browse past seasons
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/seasons/2025"
+              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+            >
+              <Archive className="h-4 w-4" />
+              Browse Archive
+            </Link>
+            <Link
+              href="/history"
+              className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+            >
+              <BookOpen className="h-4 w-4" />
+              Our History
+            </Link>
+          </div>
         </div>
       )}
     </div>

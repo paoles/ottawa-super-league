@@ -39,11 +39,6 @@ export default async function SeasonStatisticsPage({
       courseBreakdowns={courseBreakdowns}
       titleOverride={`${year} Statistics`}
       playersHref={`/seasons/${year}/players`}
-      archiveSectionLinks={{
-        leaderboardHref: `/seasons/${year}`,
-        playersHref: `/seasons/${year}/players`,
-        year,
-      }}
     />
   );
 }

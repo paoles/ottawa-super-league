@@ -63,17 +63,17 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
   - `/seasons/[year]/statistics`
   - `/seasons/[year]/players`
   - `/seasons/[year]/players/[slug]`
-  - Shared `/seasons/[year]/layout.tsx` adds amber banner ("{year} Season Archive" label) with season switcher dropdown + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
-  - Each archive page has footer cross-navigation pills linking to the other two sections for the same year (e.g. archive leaderboard → Statistics + Players; archive statistics → Leaderboard + Players; archive players → Leaderboard + Statistics); pill labels include the year (e.g. "2025 Leaderboard")
+  - Shared `/seasons/[year]/layout.tsx` adds amber banner: "{year} Season Archive" label + `ArchiveNavPills` cross-nav (Leaderboard / Statistics / Players — no year prefix, year is in the banner title) + season switcher dropdown + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
+  - `ArchiveNavPills` (`src/components/seasons/archive-nav-pills.tsx`) is a client component using `useSelectedLayoutSegment()` to render the active section as a solid amber chip (`bg-amber-900/15 font-semibold`) and the other two as bordered white links (`border-amber-300 bg-white/70`); archive pages have no separate footer cross-nav
 - Component props for reusability:
   - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`)
   - `PlayerCard`: `hrefPrefix?: string` (default `/players`)
-  - `StatisticsClient`: `titleOverride?`, `playersHref?`, `archivedSeasons?` (shows "Browse past seasons" → `/history` on live page), `archiveSectionLinks?: { leaderboardHref, playersHref, year }` (shows year-labeled Leaderboard + Players pills on archive pages)
+  - `StatisticsClient`: `titleOverride?`, `playersHref?`, `archivedSeasons?` (when set on the live stats page, shows "Browse Archive" → `/seasons/2025` + "Our History" → `/history` pills at the bottom)
   - `PlayerProfileClient`: `seasonLabel?`, `backHref?`
 - `/players/[slug]` 404s if active-season `gp === 0` (historical-only players reachable only via archive route)
 - Score mutation routes revalidate based on the score's year: live paths if `season === ACTIVE_SEASON`, else archive paths (admin PUT that moves a score between seasons revalidates both old and new)
 - Import pipeline: `scripts/import-past-data.ts` reads 2023/2024 sheets from `Past Data.xlsx`, normalizes Meadows N/E/S/W → North/East/South/West, resolves short names via per-sheet J/K alias column map, coerces out-of-year dates to the sheet's year, recomputes handicap via `calculateHandicapDiff()`, and is idempotent (deletes existing `LIKE '2023-%' OR '2024-%'` rows before re-inserting). `(Social)` suffix in alias column K sets `isSocial: true`
-- `/history` past-season pills: 2023/2024/2025 → internal `/seasons/{year}` (green pill style); 2022/2021/2020/2019 → external Google Sheets (bordered pill with `ExternalLink` icon, `target="_blank"`)
+- `/history` **Past Season Links**: all 7 year pills (2025–2019) are external — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024/2023/2022/2021/2020/2019 → respective Google Sheets (bordered pill with `ExternalLink` icon, `target="_blank"`); below the pills, a long "Browse Archive" pill → `/seasons/2025` (internal archive entry point)
 
 ## Admin
 
@@ -171,7 +171,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Player profiles CTA (compact single-row card, `py-2.5`, `mb-6`) appears after summary cards, links to `/players`
 - Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note → archive navigation
 - Footer note: styled box (`rounded-lg border bg-muted/40 px-4 py-3`) with bolded "course filters at the top"
-- After footer note: live page shows a "Browse past seasons" pill → `/history`; archive pages show year-labeled "Leaderboard" + "Players" cross-link pills via `archiveSectionLinks` prop
+- After footer note: live page shows two pills side-by-side — "Browse Archive" (Archive icon) → `/seasons/2025` + "Our History" (BookOpen icon) → `/history`. Archive pages have no footer cross-nav (handled by `ArchiveNavPills` in the banner)
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
 - Course Breakdown: 4 tiles (2x2 → 4-col), sorted easiest→hardest by avg score; shows avg score + best round + total rounds; visible on "All" only
 - Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Score Trends Y-axis
@@ -243,7 +243,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Route: `/history`
 - Static page (no DB) — all champion data hardcoded in `page.tsx`
 - Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
-- **Past Seasons archive** (immediately below heading/divider): pill links for 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries have `external: boolean` flag — 2023/2024/2025 render as `<Link>` to internal `/seasons/{year}` (filled green pill, no icon); 2019–2022 render as `<a target="_blank">` to Google Sheets (bordered pill with `ExternalLink` icon)
+- **Past Season Links** (immediately below heading/divider): "Past Season Links" muted caption + pill grid 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries are all external `<a target="_blank">` to original Google resources (bordered pill with `ExternalLink` icon) — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024–2019 → their respective Google Sheets. Below the pill grid: long "Browse Archive" pill (Archive icon) → `/seasons/2025` for entry into the internal season archive
 - Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
 - `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift

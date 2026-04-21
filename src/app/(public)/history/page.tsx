@@ -1,17 +1,17 @@
-import { ExternalLink } from "lucide-react";
+import { Archive, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type PastSeason = { year: number; label: string; href: string; external: boolean };
+type PastSeason = { year: number; label: string; href: string };
 
 const PAST_SEASONS: PastSeason[] = [
-  { year: 2025, label: "2025", href: "/seasons/2025", external: false },
-  { year: 2024, label: "2024", href: "/seasons/2024", external: false },
-  { year: 2023, label: "2023", href: "/seasons/2023", external: false },
-  { year: 2022, label: "2022", href: "https://docs.google.com/spreadsheets/d/1tXn7xPibNuA_xPGhtR1d5Whxw4TYrfSeMkk0G4oIJKA/edit?usp=sharing", external: true },
-  { year: 2021, label: "2021", href: "https://docs.google.com/spreadsheets/d/1Wg8OFH6vxynsnfOzZlA63XxRfls3wqAnoFaOSo4ygNk/edit?usp=sharing", external: true },
-  { year: 2020, label: "2020", href: "https://docs.google.com/spreadsheets/d/19OYYJ9YrkGryJv07FQ6mGngtyvMLheQRq1746M3UhSc/edit?usp=sharing", external: true },
-  { year: 2019, label: "2019", href: "https://docs.google.com/spreadsheets/d/1zJhJokpshlhFSN0zX9gyqpR1MelB50LzgmtvmrPA2V8/edit?usp=sharing", external: true },
+  { year: 2025, label: "2025", href: "https://sites.google.com/view/ottawasuperleague/home" },
+  { year: 2024, label: "2024", href: "https://docs.google.com/spreadsheets/d/1ZoMV2t79_rCe5KIE_NKrOGLr00vIBPzxzktb7n0BN3I/edit?usp=sharing" },
+  { year: 2023, label: "2023", href: "https://docs.google.com/spreadsheets/d/1W_bbeeN655qQAmBfaN3KNNWGu8GA2xbJGeAf6jcZafY/edit?usp=sharing" },
+  { year: 2022, label: "2022", href: "https://docs.google.com/spreadsheets/d/1tXn7xPibNuA_xPGhtR1d5Whxw4TYrfSeMkk0G4oIJKA/edit?usp=sharing" },
+  { year: 2021, label: "2021", href: "https://docs.google.com/spreadsheets/d/1Wg8OFH6vxynsnfOzZlA63XxRfls3wqAnoFaOSo4ygNk/edit?usp=sharing" },
+  { year: 2020, label: "2020", href: "https://docs.google.com/spreadsheets/d/19OYYJ9YrkGryJv07FQ6mGngtyvMLheQRq1746M3UhSc/edit?usp=sharing" },
+  { year: 2019, label: "2019", href: "https://docs.google.com/spreadsheets/d/1zJhJokpshlhFSN0zX9gyqpR1MelB50LzgmtvmrPA2V8/edit?usp=sharing" },
 ];
 
 const tourChampions = [
@@ -118,36 +118,35 @@ export default function HistoryPage() {
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/60" />
       </div>
 
-      {/* Past Seasons Archive */}
+      {/* Past Season Links */}
       <div className="text-center">
-        <p className="mb-2.5 text-xs font-medium text-muted-foreground">Past Seasons</p>
+        <p className="mb-2.5 text-xs font-medium text-muted-foreground">Past Season Links</p>
         <div className="flex flex-col items-center gap-2">
           {[PAST_SEASONS.slice(0, 4), PAST_SEASONS.slice(4)].map((row, i) => (
             <div key={i} className="flex gap-2">
-              {row.map((s) =>
-                s.external ? (
-                  <a
-                    key={s.year}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-14 items-center justify-center gap-1 rounded-full border border-primary/25 bg-primary/5 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
-                  >
-                    {s.label}
-                    <ExternalLink className="h-2.5 w-2.5" />
-                  </a>
-                ) : (
-                  <Link
-                    key={s.year}
-                    href={s.href}
-                    className="inline-flex w-14 items-center justify-center rounded-full border border-primary bg-primary/10 px-2 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
-                  >
-                    {s.label}
-                  </Link>
-                )
-              )}
+              {row.map((s) => (
+                <a
+                  key={s.year}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-14 items-center justify-center gap-1 rounded-full border border-primary/25 bg-primary/5 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
+                >
+                  {s.label}
+                  <ExternalLink className="h-2.5 w-2.5" />
+                </a>
+              ))}
             </div>
           ))}
+        </div>
+        <div className="mt-5 flex justify-center">
+          <Link
+            href="/seasons/2025"
+            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+          >
+            <Archive className="h-4 w-4" />
+            Browse Archive
+          </Link>
         </div>
       </div>
 

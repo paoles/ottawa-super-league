@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
 import { getLeaderboardData } from "@/lib/stats";
 import { ARCHIVED_SEASONS } from "@/lib/season";
-import { BarChart2, User, Users } from "lucide-react";
+import { User } from "lucide-react";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
@@ -76,22 +75,6 @@ export default async function SeasonLeaderboardPage({
           <User className="h-4 w-4" />
           Click a player name to view their {year} stats
         </p>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Link
-            href={`/seasons/${year}/statistics`}
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
-          >
-            <BarChart2 className="h-4 w-4" />
-            {year} Statistics
-          </Link>
-          <Link
-            href={`/seasons/${year}/players`}
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-primary transition-colors hover:bg-primary/10"
-          >
-            <Users className="h-4 w-4" />
-            {year} Players
-          </Link>
-        </div>
       </div>
     </div>
   );

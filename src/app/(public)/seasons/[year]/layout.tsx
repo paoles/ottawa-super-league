@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Archive, ChevronLeft } from "lucide-react";
 import { ARCHIVED_SEASONS } from "@/lib/season";
 import { SeasonSwitcher } from "@/components/seasons/season-switcher";
+import { ArchiveNavPills } from "@/components/seasons/archive-nav-pills";
 
 export default async function SeasonArchiveLayout({
   children,
@@ -18,10 +19,13 @@ export default async function SeasonArchiveLayout({
   return (
     <>
       <div className="border-b border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/30">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm">
-          <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
-            <Archive className="h-4 w-4 shrink-0" />
-            <span className="font-medium">{year} Season Archive</span>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2.5 text-sm">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-amber-900 dark:text-amber-200">
+            <div className="flex items-center gap-2">
+              <Archive className="h-4 w-4 shrink-0" />
+              <span className="font-medium">{year} Season Archive</span>
+            </div>
+            <ArchiveNavPills year={year} />
           </div>
           <div className="flex items-center gap-3 text-xs">
             <SeasonSwitcher current={year} />
