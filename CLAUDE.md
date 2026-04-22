@@ -63,8 +63,9 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
   - `/seasons/[year]/statistics`
   - `/seasons/[year]/players`
   - `/seasons/[year]/players/[slug]`
-  - Shared `/seasons/[year]/layout.tsx` adds amber banner: "{year} Season Archive" label + `ArchiveNavPills` cross-nav (Leaderboard / Statistics / Players — no year prefix, year is in the banner title) + season switcher dropdown + "Live season" back link; validates year via `notFound()` if not in `ARCHIVED_SEASONS`
-  - `ArchiveNavPills` (`src/components/seasons/archive-nav-pills.tsx`) is a client component using `useSelectedLayoutSegment()` to render the active section as a solid amber chip (`bg-amber-900/15 font-semibold`) and the other two as bordered white links (`border-amber-300 bg-white/70`); archive pages have no separate footer cross-nav
+  - Shared `/seasons/[year]/layout.tsx` adds sticky amber banner (`sticky top-16 z-40`, sits below `h-16` main header): thin amber gradient accent line at top + two-row mobile layout (row 1: archive icon + "{year} Season Archive" left / "← Live season" right; row 2: `ArchiveNavPills` left / season switcher right) + single-row desktop layout (`md:flex-row`); validates year via `notFound()` if not in `ARCHIVED_SEASONS`
+  - `ArchiveNavPills` (`src/components/seasons/archive-nav-pills.tsx`) is a client component using `useSelectedLayoutSegment()`; active section = solid filled chip (`bg-amber-800 text-white shadow-sm px-2.5 py-0.5`); inactive = bordered white pill (`border-amber-300 bg-white/80 px-2.5 py-0.5`); "Statistics" abbreviates to "Stats" on mobile (`sm:hidden`/`hidden sm:inline`) to keep row 2 on one line; archive pages have no separate footer cross-nav
+  - `SeasonSwitcher` (`src/components/seasons/season-switcher.tsx`) is a native `<select>` styled as an amber pill; options display as "{year} Season" (capital S)
 - Component props for reusability:
   - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`)
   - `PlayerCard`: `hrefPrefix?: string` (default `/players`)
