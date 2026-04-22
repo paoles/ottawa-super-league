@@ -309,7 +309,7 @@ export function StatisticsClient({
       {archivedSeasons && archivedSeasons.length > 0 && (
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
-            href="/seasons/2025"
+            href="/seasons/2025/statistics"
             className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
           >
             <Archive className="h-4 w-4" />
