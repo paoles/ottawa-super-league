@@ -6,6 +6,7 @@ import {
   getActivePlayerSlugs,
 } from "@/lib/stats";
 import { ARCHIVED_SEASONS } from "@/lib/season";
+import { SEASON_COMMISSIONERS } from "@/lib/constants";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
@@ -55,6 +56,7 @@ export default async function SeasonPlayerProfilePage({
       history={history}
       seasonLabel={String(year)}
       backHref={`/seasons/${year}/players`}
+      commissionerSlug={SEASON_COMMISSIONERS[year]}
     />
   );
 }

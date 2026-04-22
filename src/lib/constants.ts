@@ -1,3 +1,9 @@
+export const SEASON_COMMISSIONERS: Record<number, string> = {
+  2025: "nico-paoletti",
+  2024: "kevin-slack",
+  2023: "blair-watson",
+};
+
 export const COURSES = ["North", "East", "West", "South"] as const;
 export type Course = (typeof COURSES)[number];
 

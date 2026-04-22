@@ -3,6 +3,9 @@ import { Archive, BookOpen } from "lucide-react";
 import { PlayerCard } from "@/components/players/player-card";
 import { getPlayersWithStats } from "@/lib/stats";
 import { ACTIVE_SEASON } from "@/lib/season";
+import { db } from "@/lib/db";
+import { players } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,10 +15,13 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function PlayersPage() {
-  const players = await getPlayersWithStats();
+  const [allPlayers, commissionerRows] = await Promise.all([
+    getPlayersWithStats(),
+    db.select({ slug: players.slug }).from(players).where(eq(players.isCommissioner, true)).limit(1),
+  ]);
+  const commissionerSlug = commissionerRows[0]?.slug;
 
-  // Sort alphabetically
-  const sorted = [...players].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = [...allPlayers].sort((a, b) => a.name.localeCompare(b.name));
 
   const archiveLinks = (
     <div className="flex flex-wrap items-center justify-center gap-3">
@@ -65,7 +71,7 @@ export default async function PlayersPage() {
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {sorted.map((player) => (
-              <PlayerCard key={player.id} player={player} />
+              <PlayerCard key={player.id} player={player} commissionerSlug={commissionerSlug} />
             ))}
           </div>
           <div className="mt-8 flex justify-center">

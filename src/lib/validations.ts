@@ -21,6 +21,7 @@ export const playerCreateSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   isSocial: z.boolean(),
   isActive: z.boolean(),
+  isCommissioner: z.boolean(),
   photoUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
 });
 

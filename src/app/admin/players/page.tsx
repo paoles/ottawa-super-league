@@ -11,10 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, X } from "lucide-react";
 import { DeletePlayerButton } from "@/components/admin/delete-player-button";
-import { ActiveToggle } from "@/components/admin/active-toggle";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +39,9 @@ export default async function AdminPlayersPage() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Toggle <strong>Active</strong> to control whether a player appears in
-        the Input Score picker. Inactive players keep their historical scores.
+        Edit a player to toggle <strong>Active</strong> — controls whether they
+        appear in the Input Score picker. Inactive players keep their historical
+        scores.
       </p>
 
       <div className="rounded-md border bg-white">
@@ -50,42 +49,40 @@ export default async function AdminPlayersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="w-20 text-center">GP</TableHead>
-              <TableHead className="w-24 text-center">Active</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-10 px-2 text-center">GP</TableHead>
+              <TableHead className="w-20">
+                <div className="flex items-center justify-end gap-1">
+                  <span className="w-9 text-center">Edit</span>
+                  <span className="w-9 text-center">Delete</span>
+                </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {allPlayers.map((player) => (
               <TableRow key={player.id} className={player.isActive ? "" : "opacity-60"}>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     {player.name}
+                    {player.isCommissioner && (
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-yellow-400 text-[11px] font-bold text-yellow-500">
+                        C
+                      </span>
+                    )}
                     {player.isSocial && (
-                      <Badge variant="secondary" className="text-xs">
-                        Social
-                      </Badge>
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary">
+                        S
+                      </span>
                     )}
                     {!player.isActive && (
-                      <Badge variant="outline" className="text-xs">
-                        Inactive
-                      </Badge>
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-muted-foreground/30 bg-muted text-[11px] font-semibold text-muted-foreground">
+                        <X className="h-3 w-3" />
+                      </span>
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="px-2 text-center">
                   {scoreMap.get(player.id) ?? 0}
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center">
-                    <ActiveToggle
-                      playerId={player.id}
-                      playerName={player.name}
-                      isSocial={player.isSocial}
-                      photoUrl={player.photoUrl}
-                      initialActive={player.isActive}
-                    />
-                  </div>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">

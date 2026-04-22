@@ -44,6 +44,7 @@ interface PlayerProfileClientProps {
   history: PlayerRound[];
   seasonLabel?: string;
   backHref?: string;
+  commissionerSlug?: string;
 }
 
 export function PlayerProfileClient({
@@ -51,6 +52,7 @@ export function PlayerProfileClient({
   history,
   seasonLabel,
   backHref,
+  commissionerSlug,
 }: PlayerProfileClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
   const [sortKey, setSortKey] = useState<SortKey>("roundDate");
@@ -151,7 +153,7 @@ export function PlayerProfileClient({
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-light">{profile.name}</h1>
             {profile.isSocial && <Badge variant="secondary">Social</Badge>}
-            {profile.slug === "nico-paoletti" && (
+            {commissionerSlug && profile.slug === commissionerSlug && (
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
             )}
           </div>

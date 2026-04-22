@@ -36,6 +36,7 @@ export default async function EditPlayerPage({
               name: player.name,
               isSocial: player.isSocial,
               isActive: player.isActive,
+              isCommissioner: player.isCommissioner,
               photoUrl: player.photoUrl ?? "",
             }}
           />

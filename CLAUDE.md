@@ -21,7 +21,8 @@ npm run db:seed      # Seed database with Summer Tour 2025 data
 npm run db:studio    # Open Drizzle Studio
 npm run db:import-past  # Idempotent import of 2023/2024 data from Past Data.xlsx
 npx tsx scripts/hash-password.ts "password"  # Generate bcrypt hash for .env.local
-npx tsx scripts/migrate-add-is-active.ts     # Idempotent ALTER — reads TURSO_* from env (pattern for future migrations)
+npx tsx scripts/migrate-add-is-active.ts        # Idempotent ALTER — reads TURSO_* from env (pattern for future migrations)
+npx tsx scripts/migrate-add-is-commissioner.ts  # Idempotent ALTER + sets Nico as commissioner
 npx vercel env pull .env.vercel.production --environment=production  # Pull prod env vars (file is gitignored; rm when done)
 ```
 
@@ -42,7 +43,8 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
 - ISR with 5-min revalidation on read pages
 - Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths (live pages if score belongs to `ACTIVE_SEASON`, otherwise the matching `/seasons/[year]/*` archive paths)
-- `players.is_active` boolean (default `true`) gates whether a player appears in the Input Score picker; inactive players keep their historical scores and remain visible on archive pages. Admins toggle manually per season from `/admin/players`. Schema: `integer("is_active", { mode: "boolean" }).notNull().default(true)`
+- `players.is_active` boolean (default `true`) gates whether a player appears in the Input Score picker; inactive players keep their historical scores and remain visible on archive pages. Admins toggle via the edit form from `/admin/players`. Schema: `integer("is_active", { mode: "boolean" }).notNull().default(true)`
+- `players.is_commissioner` boolean (default `false`) marks the current commissioner; toggled via the edit form. Schema: `integer("is_commissioner", { mode: "boolean" }).notNull().default(false)`. The commissioner receives a gold **C** circle badge on every player-facing surface (leaderboard table, leaderboard mobile cards, player directory, player profile header). Live pages query DB for the commissioner slug at render time; archive pages use `SEASON_COMMISSIONERS` constant (`src/lib/constants.ts`) which maps `{ 2025: "nico-paoletti", 2024: "kevin-slack", 2023: "blair-watson" }`. All components that show the badge accept a `commissionerSlug?: string` prop — never hardcode a slug in components.
 - **Self-serve player creation**: `/scores` step 3 has a dashed green "Can't find your name? Add a new player" button below the picker; opens a Dialog → POST `/api/players` (public, no auth) with `{ name }` → server forces `isSocial: true, isActive: true`, returns `{id, name}`; new player auto-selected in the form. `score-form.tsx` owns the players list in `useState` so additions appear immediately. `/api/players` POST revalidates `/scores` and `/admin/players`
 - Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
 - Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
@@ -67,10 +69,10 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
   - `ArchiveNavPills` (`src/components/seasons/archive-nav-pills.tsx`) is a client component using `useSelectedLayoutSegment()`; active section = solid filled chip (`bg-amber-800 text-white shadow-sm px-2.5 py-0.5`); inactive = bordered white pill (`border-amber-300 bg-white/80 px-2.5 py-0.5`); "Statistics" abbreviates to "Stats" on mobile (`sm:hidden`/`hidden sm:inline`) to keep row 2 on one line; archive pages have no separate footer cross-nav
   - `SeasonSwitcher` (`src/components/seasons/season-switcher.tsx`) is a native `<select>` styled as an amber pill; options display as "{year} Season" (capital S)
 - Component props for reusability:
-  - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`)
-  - `PlayerCard`: `hrefPrefix?: string` (default `/players`)
+  - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`), `commissionerSlug?: string`
+  - `PlayerCard`: `hrefPrefix?: string` (default `/players`), `commissionerSlug?: string`
   - `StatisticsClient`: `titleOverride?`, `playersHref?`, `archivedSeasons?` (when set on the live stats page, shows "Browse Archive" → `/seasons/2025/statistics` + "Our History" → `/history` pills at the bottom)
-  - `PlayerProfileClient`: `seasonLabel?`, `backHref?`
+  - `PlayerProfileClient`: `seasonLabel?`, `backHref?`, `commissionerSlug?: string`
 - `/players/[slug]` 404s if active-season `gp === 0` (historical-only players reachable only via archive route)
 - Score mutation routes revalidate based on the score's year: live paths if `season === ACTIVE_SEASON`, else archive paths (admin PUT that moves a score between seasons revalidates both old and new)
 - Import pipeline: `scripts/import-past-data.ts` reads 2023/2024 sheets from `Past Data.xlsx`, normalizes Meadows N/E/S/W → North/East/South/West, resolves short names via per-sheet J/K alias column map, coerces out-of-year dates to the sheet's year, recomputes handicap via `calculateHandicapDiff()`, and is idempotent (deletes existing `LIKE '2023-%' OR '2024-%'` rows before re-inserting). `(Social)` suffix in alias column K sets `isSocial: true`
@@ -91,8 +93,8 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 - Admin API: POST `/api/admin/players`, PUT/DELETE `/api/admin/players/[id]`, PUT/DELETE `/api/admin/scores/[id]`
 - Player delete blocked if player has scores (409 Conflict)
 - Score edit recalculates handicap differential automatically
-- Admin Players list (`src/app/admin/players/page.tsx`) shows an "Active" switch column using `ActiveToggle` client component (`src/components/admin/active-toggle.tsx`) — inline PUT to `/api/admin/players/[id]` with the full payload; inactive rows render at `opacity-60` with an "Inactive" badge alongside the Social badge
-- `PlayerForm` (`src/components/admin/player-form.tsx`) has an "Active this season" switch on create/edit; `playerCreateSchema` / `playerUpdateSchema` in `src/lib/validations.ts` both require `isActive: boolean`
+- Admin Players list (`src/app/admin/players/page.tsx`): compact table with Name / GP / Edit·Delete columns; no inline Active toggle. Name cell shows circle pills: gold **C** (`border-yellow-400 text-yellow-500`) for commissioner, green **S** (`border-primary/40 bg-primary/10 text-primary`) for Social, muted **×** icon (`border-muted-foreground/30 bg-muted`) for inactive. Inactive rows render at `opacity-60`. Active/Commissioner toggled via edit form only.
+- `PlayerForm` (`src/components/admin/player-form.tsx`) has "Active this season" + "Commissioner" switches on create/edit; `playerCreateSchema` / `playerUpdateSchema` in `src/lib/validations.ts` both require `isActive: boolean` and `isCommissioner: boolean`
 - Public `/api/players` route: GET returns `{id, name}[]`; POST accepts `{ name }` (validated by `publicPlayerCreateSchema`), no auth, always creates as Social + Active
 
 ## Production & Deployment

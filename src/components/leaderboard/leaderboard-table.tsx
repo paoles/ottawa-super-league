@@ -13,6 +13,7 @@ import type { LeaderboardRow } from "@/types";
 interface LeaderboardTableProps {
   data: LeaderboardRow[];
   playerHrefPrefix?: string;
+  commissionerSlug?: string;
 }
 
 function WinPctBar({ pct }: { pct: number }) {
@@ -57,7 +58,7 @@ function RankBadge({ rank }: { rank: number | null }) {
   return <span className="text-sm text-muted-foreground">{rank}</span>;
 }
 
-export function LeaderboardTable({ data, playerHrefPrefix = "/players" }: LeaderboardTableProps) {
+export function LeaderboardTable({ data, playerHrefPrefix = "/players", commissionerSlug }: LeaderboardTableProps) {
   const lastRankedIndex = data.reduce((last, row, i) => (row.rank !== null ? i : last), -1);
 
   return (
@@ -98,7 +99,7 @@ export function LeaderboardTable({ data, playerHrefPrefix = "/players" }: Leader
                         Social
                       </span>
                     )}
-                    {row.slug === "nico-paoletti" && (
+                    {commissionerSlug && row.slug === commissionerSlug && (
                       <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
                     )}
                   </div>

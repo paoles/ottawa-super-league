@@ -5,6 +5,7 @@ import type { LeaderboardRow } from "@/types";
 interface LeaderboardCardProps {
   row: LeaderboardRow;
   playerHrefPrefix?: string;
+  commissionerSlug?: string;
 }
 
 function rankBadgeClass(rank: number | null): string {
@@ -20,7 +21,7 @@ function winPctClass(pct: number): string {
   return "text-red-500";
 }
 
-export function LeaderboardCard({ row, playerHrefPrefix = "/players" }: LeaderboardCardProps) {
+export function LeaderboardCard({ row, playerHrefPrefix = "/players", commissionerSlug }: LeaderboardCardProps) {
   if (row.gp === 0) return null;
 
   return (
@@ -37,7 +38,7 @@ export function LeaderboardCard({ row, playerHrefPrefix = "/players" }: Leaderbo
                 {row.isSocial && (
                   <span className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">Social</span>
                 )}
-                {row.slug === "nico-paoletti" && (
+                {commissionerSlug && row.slug === commissionerSlug && (
                   <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-yellow-400 bg-transparent text-[10px] font-bold text-yellow-500">C</span>
                 )}
               </div>

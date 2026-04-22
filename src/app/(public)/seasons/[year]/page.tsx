@@ -3,6 +3,7 @@ import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
 import { getLeaderboardData } from "@/lib/stats";
 import { ARCHIVED_SEASONS } from "@/lib/season";
+import { SEASON_COMMISSIONERS } from "@/lib/constants";
 import { User } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -56,6 +57,7 @@ export default async function SeasonLeaderboardPage({
             <LeaderboardTable
               data={leaderboard}
               playerHrefPrefix={`/seasons/${year}/players`}
+              commissionerSlug={SEASON_COMMISSIONERS[year]}
             />
           </div>
           <div className="flex flex-col gap-2 md:hidden">
@@ -64,6 +66,7 @@ export default async function SeasonLeaderboardPage({
                 key={row.playerId}
                 row={row}
                 playerHrefPrefix={`/seasons/${year}/players`}
+                commissionerSlug={SEASON_COMMISSIONERS[year]}
               />
             ))}
           </div>

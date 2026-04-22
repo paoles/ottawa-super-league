@@ -7,6 +7,7 @@ export const players = sqliteTable("players", {
   slug: text("slug").notNull().unique(),
   isSocial: integer("is_social", { mode: "boolean" }).notNull().default(false),
   isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+  isCommissioner: integer("is_commissioner", { mode: "boolean" }).notNull().default(false),
   photoUrl: text("photo_url"),
   createdAt: text("created_at")
     .notNull()

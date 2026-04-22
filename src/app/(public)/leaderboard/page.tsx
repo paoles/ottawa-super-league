@@ -2,13 +2,20 @@ import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { LeaderboardCard } from "@/components/leaderboard/leaderboard-card";
 import { getLeaderboardData } from "@/lib/stats";
 import { ACTIVE_SEASON } from "@/lib/season";
+import { db } from "@/lib/db";
+import { players } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { Archive, BarChart2, BookOpen, User } from "lucide-react";
 
 export const revalidate = 300;
 
 export default async function LeaderboardPage() {
-  const leaderboard = await getLeaderboardData();
+  const [leaderboard, commissionerRows] = await Promise.all([
+    getLeaderboardData(),
+    db.select({ slug: players.slug }).from(players).where(eq(players.isCommissioner, true)).limit(1),
+  ]);
+  const commissionerSlug = commissionerRows[0]?.slug;
   const hasScores = leaderboard.some((r) => r.gp > 0);
 
   return (
@@ -29,13 +36,13 @@ export default async function LeaderboardPage() {
         <>
           {/* Desktop table */}
           <div className="hidden md:block">
-            <LeaderboardTable data={leaderboard} />
+            <LeaderboardTable data={leaderboard} commissionerSlug={commissionerSlug} />
           </div>
 
           {/* Mobile cards */}
           <div className="flex flex-col gap-2 md:hidden">
             {leaderboard.map((row) => (
-              <LeaderboardCard key={row.playerId} row={row} />
+              <LeaderboardCard key={row.playerId} row={row} commissionerSlug={commissionerSlug} />
             ))}
           </div>
 

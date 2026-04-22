@@ -36,12 +36,14 @@ export function PlayerForm({
       name: defaultValues?.name ?? "",
       isSocial: defaultValues?.isSocial ?? false,
       isActive: defaultValues?.isActive ?? true,
+      isCommissioner: defaultValues?.isCommissioner ?? false,
       photoUrl: defaultValues?.photoUrl ?? "",
     },
   });
 
   const isSocial = watch("isSocial");
   const isActive = watch("isActive");
+  const isCommissioner = watch("isCommissioner");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -86,6 +88,15 @@ export function PlayerForm({
             (shown in Input Score)
           </span>
         </Label>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Switch
+          id="isCommissioner"
+          checked={isCommissioner}
+          onCheckedChange={(checked) => setValue("isCommissioner", checked)}
+        />
+        <Label htmlFor="isCommissioner">Commissioner</Label>
       </div>
 
       <Button type="submit" disabled={isLoading} className="w-full">
