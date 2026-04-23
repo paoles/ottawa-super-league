@@ -237,7 +237,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
      - Right: Dancing Script `text-3xl` heading "Join the league!" + body text with `mailto:` link to `ottawasuperleague.vip@gmail.com` (primary color, underlined) + bold "Follow us via the link below:" + Instagram SVG icon (`h-10 w-10`) linking to `https://www.instagram.com/ottawasuperleague/` (new tab)
      - Instagram icon: inline SVG with radialGradient (yellow→red→purple→blue), white camera outline
   2. **Commissioner's Memorial Hall** — `mt-16`; Dancing Script `text-3xl` centered heading
-     - `COMMISSIONERS` array: Nico Paoletti (2025–Present), Kevin Slack (2023–2025), Blair Watson (2019–2023)
+     - `COMMISSIONERS` array: Nico Paoletti (2025–Present), Kevin Slack (2024), Blair Watson (2019–2023)
      - 3-col grid on sm+ (`max-w-3xl mx-auto`, `gap-4`); cards match ChampionCard from `/history` (rounded-2xl, aspect-square image with hover zoom, name `text-lg font-semibold` + years below)
      - Images: `/contact/nico.JPG`, `/contact/kevin.jpg`, `/contact/blair.jpg`
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const COMMISSIONERS = [
   { name: "Nico Paoletti", years: "2025 – Present", src: "/contact/nico.JPG" },
-  { name: "Kevin Slack", years: "2023 – 2025", src: "/contact/kevin.jpg" },
+  { name: "Kevin Slack", years: "2024", src: "/contact/kevin.jpg" },
   { name: "Blair Watson", years: "2019 – 2023", src: "/contact/blair.jpg" },
 ];
 
