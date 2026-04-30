@@ -26,7 +26,7 @@ export default async function HomePage() {
       <section
         className="relative px-4 py-4 text-center sm:py-6"
         style={{
-          backgroundImage: "url('/Home/Landscape.png')",
+          backgroundImage: "url('/home/Landscape.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

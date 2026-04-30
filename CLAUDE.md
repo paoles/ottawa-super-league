@@ -287,7 +287,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Homepage Design
 
-- Hero: `Landscape.png` (`/public/Home/`) as `cover` background with `bg-white/70` overlay; `logo-full.png` centered on top (`relative`, max-w-[340px] sm:max-w-[420px], `mb-3`); padding `py-4 sm:py-6`; no badge; all hero children are `relative` to render above overlay
+- Hero: `Landscape.png` (`/public/home/`) as `cover` background with `bg-white/70` overlay; `logo-full.png` centered on top (`relative`, max-w-[340px] sm:max-w-[420px], `mb-3`); padding `py-4 sm:py-6`; no badge; all hero children are `relative` to render above overlay
 - CTA buttons (stacked full-width on mobile, inline on sm+): "Input Score" (primary, → /scores) + "Book a Tee Time" (outline, → external tee-on.com URL, target _blank)
 - Quick Links band: dark green bg (`bg-[#186732]`), 3-col grid of icon cards (Trophy→Leaderboard, BarChart2→Statistics, Users→Players); `bg-white/10` cards with `border-white/20`, hover `bg-white/20`; subtitle text `hidden sm:block`
 - Sponsors: "Proudly Sponsored By" Dancing Script heading + green decorative divider + 6 sponsor logo tiles (2-col mobile / 3-col sm, `gap-3/4`); images from `/public/sponsors/`; `max-h-20/24` object-contain
