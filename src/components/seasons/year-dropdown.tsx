@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ACTIVE_SEASON, ARCHIVED_SEASONS } from "@/lib/season";
 
@@ -24,17 +25,20 @@ export function YearDropdown() {
   }
 
   return (
-    <select
-      value={current}
-      onChange={handleChange}
-      aria-label="Select season"
-      className="cursor-pointer rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary shadow-sm transition-colors hover:border-primary/50 hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-    >
-      {ALL_YEARS.map((y) => (
-        <option key={y} value={y}>
-          {y === ACTIVE_SEASON ? `${y} · Live` : `${y}`}
-        </option>
-      ))}
-    </select>
+    <div className="relative inline-flex items-center">
+      <select
+        value={current}
+        onChange={handleChange}
+        aria-label="Select season"
+        className="cursor-pointer appearance-none bg-transparent pr-5 text-base font-semibold text-primary focus:outline-none"
+      >
+        {ALL_YEARS.map((y) => (
+          <option key={y} value={y}>
+            {`${y}`}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-0 h-4 w-4 text-primary" />
+    </div>
   );
 }

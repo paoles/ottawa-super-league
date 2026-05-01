@@ -44,7 +44,7 @@ export default async function LeaderboardPage({
         >
           Leaderboard
         </h1>
-        <div className="absolute inset-y-0 right-0 flex items-center">
+        <div className="absolute inset-y-0 right-0 flex items-center translate-y-1">
           <YearDropdown />
         </div>
       </div>
