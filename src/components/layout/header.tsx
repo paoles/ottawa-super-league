@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, Shield, ChevronDown } from "lucide-react";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -35,7 +36,7 @@ const ABOUT_LINKS = [
   { href: "/contact", label: "Contact Us", yearAware: false },
 ];
 
-export function Header() {
+function HeaderInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -214,5 +215,24 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+export function Header() {
+  return (
+    <Suspense fallback={
+      <header className="sticky top-0 z-50 border-b bg-white">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo-icon.png" alt="OSL" className="h-9 w-9 object-contain" />
+            <span className="hidden text-lg font-light text-foreground sm:inline">
+              Ottawa Super League
+            </span>
+          </Link>
+        </div>
+      </header>
+    }>
+      <HeaderInner />
+    </Suspense>
   );
 }
