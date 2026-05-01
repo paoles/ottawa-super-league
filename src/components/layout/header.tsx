@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, Shield, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,25 +17,36 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { ACTIVE_SEASON, ARCHIVED_SEASONS } from "@/lib/season";
+
+const ALL_YEARS = [ACTIVE_SEASON, ...ARCHIVED_SEASONS];
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/statistics", label: "Statistics" },
+  { href: "/", label: "Home", yearAware: false },
+  { href: "/leaderboard", label: "Leaderboard", yearAware: true },
+  { href: "/statistics", label: "Statistics", yearAware: true },
 ];
 
 const ABOUT_LINKS = [
-  { href: "/players", label: "The Players" },
-  { href: "/history", label: "Our History" },
-  { href: "/course", label: "The Course" },
-  { href: "/rules", label: "Our Rules" },
-  { href: "/contact", label: "Contact Us" },
+  { href: "/players", label: "The Players", yearAware: true },
+  { href: "/history", label: "Our History", yearAware: false },
+  { href: "/course", label: "The Course", yearAware: false },
+  { href: "/rules", label: "Our Rules", yearAware: false },
+  { href: "/contact", label: "Contact Us", yearAware: false },
 ];
 
 export function Header() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+
+  const raw = searchParams.get("year");
+  const parsed = raw ? parseInt(raw, 10) : NaN;
+  const yearSuffix = ALL_YEARS.includes(parsed) && parsed !== ACTIVE_SEASON ? `?year=${parsed}` : "";
+
+  const navHref = (link: { href: string; yearAware: boolean }) =>
+    link.yearAware ? link.href + yearSuffix : link.href;
 
   const isAboutActive = ABOUT_LINKS.some((l) => pathname === l.href);
 
@@ -55,7 +66,7 @@ export function Header() {
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={navHref(link)}
                 className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                   pathname === link.href
                     ? "bg-primary/10 text-primary"
@@ -82,7 +93,7 @@ export function Header() {
               <DropdownMenuContent align="end">
                 {ABOUT_LINKS.map((link) => (
                   <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href}>{link.label}</Link>
+                    <Link href={navHref(link)}>{link.label}</Link>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -131,7 +142,7 @@ export function Header() {
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
-                    href={link.href}
+                    href={navHref(link)}
                     onClick={() => setOpen(false)}
                     className={`mx-4 rounded-md px-4 py-3 text-base font-medium transition-colors ${
                       pathname === link.href
@@ -161,7 +172,7 @@ export function Header() {
                   ABOUT_LINKS.map((link) => (
                     <Link
                       key={link.href}
-                      href={link.href}
+                      href={navHref(link)}
                       onClick={() => { setOpen(false); setAboutOpen(false); }}
                       className={`mx-4 rounded-md py-2.5 pl-8 pr-4 text-sm font-medium transition-colors ${
                         pathname === link.href
