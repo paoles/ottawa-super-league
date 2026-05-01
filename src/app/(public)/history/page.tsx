@@ -1,6 +1,5 @@
-import { Archive, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 type PastSeason = { year: number; label: string; href: string };
 
@@ -138,15 +137,6 @@ export default function HistoryPage() {
               ))}
             </div>
           ))}
-        </div>
-        <div className="mt-5 flex justify-center">
-          <Link
-            href="/seasons/2025"
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-          >
-            <Archive className="h-4 w-4" />
-            Browse Archive
-          </Link>
         </div>
       </div>
 

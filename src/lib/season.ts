@@ -17,3 +17,11 @@ export function getSeasonFromDate(iso: string): number {
 export function isArchivedSeason(year: number): boolean {
   return ARCHIVED_SEASONS.includes(year);
 }
+
+export function resolveSeasonParam(raw: string | string[] | undefined): number {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  const n = typeof value === "string" ? parseInt(value, 10) : NaN;
+  if (n === ACTIVE_SEASON) return ACTIVE_SEASON;
+  if (ARCHIVED_SEASONS.includes(n)) return n;
+  return ACTIVE_SEASON;
+}

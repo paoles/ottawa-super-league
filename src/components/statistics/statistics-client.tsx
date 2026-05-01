@@ -6,16 +6,13 @@ import { ScoreTrendsChart } from "./score-trends-chart";
 import { DistributionChart } from "./distribution-chart";
 
 import Link from "next/link";
-import { Archive, BookOpen } from "lucide-react";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
 import { COURSES } from "@/lib/constants";
 
 interface StatisticsClientProps {
   trends: ScoreTrendPoint[];
   courseBreakdowns: CourseBreakdown[];
-  titleOverride?: string;
   playersHref?: string;
-  archivedSeasons?: readonly number[];
 }
 
 const COURSE_COLORS: Record<string, string> = {
@@ -53,9 +50,7 @@ function formatDate(dateStr: string): string {
 export function StatisticsClient({
   trends,
   courseBreakdowns,
-  titleOverride,
   playersHref = "/players",
-  archivedSeasons,
 }: StatisticsClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
 
@@ -96,20 +91,7 @@ export function StatisticsClient({
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      {/* Header */}
-      <h1
-        className="mb-0 text-center text-4xl font-bold text-primary"
-        style={{ fontFamily: "var(--font-dancing-script)", WebkitTextStroke: "0.8px currentColor" }}
-      >
-        {titleOverride ?? "Statistics"}
-      </h1>
-      <div className="mx-auto mt-3 mb-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/60" />
-        <div className="h-1 w-12 rounded-full bg-primary" />
-        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/60" />
-      </div>
-
+    <div>
       {/* Course filter pills */}
       <div className="mb-6 flex gap-1.5">
         {["All", ...COURSES].map((course) => (
@@ -304,26 +286,6 @@ export function StatisticsClient({
       <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-center text-sm text-foreground">
         Use the <span className="font-medium">course filters at the top</span> to narrow all results by course.
       </div>
-
-      {/* Archive + history links: shown on the live stats page */}
-      {archivedSeasons && archivedSeasons.length > 0 && (
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/seasons/2025/statistics"
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-          >
-            <Archive className="h-4 w-4" />
-            Browse Archive
-          </Link>
-          <Link
-            href="/history"
-            className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
-          >
-            <BookOpen className="h-4 w-4" />
-            Our History
-          </Link>
-        </div>
-      )}
     </div>
   );
 }

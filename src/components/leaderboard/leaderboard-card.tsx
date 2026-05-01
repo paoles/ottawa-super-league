@@ -4,7 +4,7 @@ import type { LeaderboardRow } from "@/types";
 
 interface LeaderboardCardProps {
   row: LeaderboardRow;
-  playerHrefPrefix?: string;
+  playerHrefSuffix?: string;
   commissionerSlug?: string;
 }
 
@@ -21,11 +21,11 @@ function winPctClass(pct: number): string {
   return "text-red-500";
 }
 
-export function LeaderboardCard({ row, playerHrefPrefix = "/players", commissionerSlug }: LeaderboardCardProps) {
+export function LeaderboardCard({ row, playerHrefSuffix = "", commissionerSlug }: LeaderboardCardProps) {
   if (row.gp === 0) return null;
 
   return (
-    <Link href={`${playerHrefPrefix}/${row.slug}`}>
+    <Link href={`/players/${row.slug}${playerHrefSuffix}`}>
       <Card className="py-0 shadow-md transition-shadow hover:shadow-lg">
         <CardContent className="px-3 py-3">
           <div className="flex items-center justify-between">

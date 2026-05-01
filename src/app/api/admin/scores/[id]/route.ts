@@ -6,22 +6,13 @@ import { eq } from "drizzle-orm";
 import { scoreUpdateSchema } from "@/lib/validations";
 import { calculateHandicapDiff } from "@/lib/handicap";
 import type { Course, Tee } from "@/lib/constants";
-import { ACTIVE_SEASON, isArchivedSeason } from "@/lib/season";
 
-function revalidateSeason(season: number, playerSlug?: string) {
-  const isActive = season === ACTIVE_SEASON;
-  if (isActive) {
-    revalidatePath("/");
-    revalidatePath("/leaderboard");
-    revalidatePath("/statistics");
-    revalidatePath("/players");
-    if (playerSlug) revalidatePath(`/players/${playerSlug}`);
-  } else if (isArchivedSeason(season)) {
-    revalidatePath(`/seasons/${season}`);
-    revalidatePath(`/seasons/${season}/statistics`);
-    revalidatePath(`/seasons/${season}/players`);
-    if (playerSlug) revalidatePath(`/seasons/${season}/players/${playerSlug}`);
-  }
+function revalidateLive(playerSlug?: string) {
+  revalidatePath("/");
+  revalidatePath("/leaderboard");
+  revalidatePath("/statistics");
+  revalidatePath("/players");
+  if (playerSlug) revalidatePath(`/players/${playerSlug}`);
 }
 
 export async function PUT(
@@ -52,11 +43,6 @@ export async function PUT(
       tee as Tee
     );
 
-    const [existing] = await db
-      .select({ roundDate: scores.roundDate })
-      .from(scores)
-      .where(eq(scores.id, scoreId));
-
     const [updated] = await db
       .update(scores)
       .set({ roundDate, course, tee, score, handicapDiff })
@@ -72,10 +58,7 @@ export async function PUT(
       .from(players)
       .where(eq(players.id, updated.playerId));
 
-    const newSeason = parseInt(roundDate.slice(0, 4), 10);
-    const oldSeason = existing ? parseInt(existing.roundDate.slice(0, 4), 10) : newSeason;
-    revalidateSeason(newSeason, player?.slug);
-    if (oldSeason !== newSeason) revalidateSeason(oldSeason, player?.slug);
+    revalidateLive(player?.slug);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -98,7 +81,7 @@ export async function DELETE(
     const [deleted] = await db
       .delete(scores)
       .where(eq(scores.id, scoreId))
-      .returning({ playerId: scores.playerId, roundDate: scores.roundDate });
+      .returning({ playerId: scores.playerId });
 
     if (!deleted) {
       return NextResponse.json({ error: "Score not found" }, { status: 404 });
@@ -109,8 +92,7 @@ export async function DELETE(
       .from(players)
       .where(eq(players.id, deleted.playerId));
 
-    const season = parseInt(deleted.roundDate.slice(0, 4), 10);
-    revalidateSeason(season, player?.slug);
+    revalidateLive(player?.slug);
 
     return NextResponse.json({ success: true });
   } catch (error) {

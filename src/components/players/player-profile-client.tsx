@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayerHistoryChart } from "./player-history-chart";
 import { DistributionChart } from "@/components/statistics/distribution-chart";
+import { YearDropdown } from "@/components/seasons/year-dropdown";
 import type { PlayerProfile, PlayerRound, DistributionBucket } from "@/types";
 import { COURSES } from "@/lib/constants";
 
@@ -42,7 +43,6 @@ const SORT_LABELS: Record<SortKey, string> = {
 interface PlayerProfileClientProps {
   profile: PlayerProfile;
   history: PlayerRound[];
-  seasonLabel?: string;
   backHref?: string;
   commissionerSlug?: string;
 }
@@ -50,7 +50,6 @@ interface PlayerProfileClientProps {
 export function PlayerProfileClient({
   profile,
   history,
-  seasonLabel,
   backHref,
   commissionerSlug,
 }: PlayerProfileClientProps) {
@@ -149,7 +148,7 @@ export function PlayerProfileClient({
             initials
           )}
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-light">{profile.name}</h1>
             {profile.isSocial && <Badge variant="secondary">Social</Badge>}
@@ -160,13 +159,22 @@ export function PlayerProfileClient({
           <p className="text-sm text-muted-foreground">
             {profile.rank ? `Rank #${profile.rank}` : "Unranked"} &middot;{" "}
             {profile.gp} rounds played
-            {seasonLabel ? ` · ${seasonLabel}` : ""}
           </p>
+        </div>
+        <div className="shrink-0">
+          <YearDropdown />
         </div>
       </div>
 
       {profile.gp === 0 ? (
-        <p className="text-muted-foreground">No rounds recorded yet.</p>
+        <Card className="border-dashed bg-muted/30">
+          <CardContent className="px-6 py-10 text-center">
+            <p className="text-base font-medium text-foreground">No rounds played in this season.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Use the year selector above to view another season.
+            </p>
+          </CardContent>
+        </Card>
       ) : (
         <>
           {/* Course filter pills */}

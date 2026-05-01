@@ -41,10 +41,10 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 - All stats (W/L/T, leaderboard rankings, averages) computed at read time from raw score rows
 - Handicap differential stored per score record (computed at insert time, never changes)
 - Win/Loss/Tie auto-calculated by grouping scores by round_date (lowest score wins)
-- ISR with 5-min revalidation on read pages
-- Score submission: POST /api/scores → validates player IDs exist → DB insert → revalidate paths (live pages if score belongs to `ACTIVE_SEASON`, otherwise the matching `/seasons/[year]/*` archive paths)
-- `players.is_active` boolean (default `true`) gates whether a player appears in the Input Score picker; inactive players keep their historical scores and remain visible on archive pages. Admins toggle via the edit form from `/admin/players`. Schema: `integer("is_active", { mode: "boolean" }).notNull().default(true)`
-- `players.is_commissioner` boolean (default `false`) marks the current commissioner; toggled via the edit form. Schema: `integer("is_commissioner", { mode: "boolean" }).notNull().default(false)`. The commissioner receives a gold **C** circle badge on every player-facing surface (leaderboard table, leaderboard mobile cards, player directory, player profile header). Live pages query DB for the commissioner slug at render time; archive pages use `SEASON_COMMISSIONERS` constant (`src/lib/constants.ts`) which maps `{ 2025: "nico-paoletti", 2024: "kevin-slack", 2023: "blair-watson" }`. All components that show the badge accept a `commissionerSlug?: string` prop — never hardcode a slug in components.
+- Rendering split: `/` is ISR (5-min revalidate). `/leaderboard`, `/statistics`, `/players`, `/players/[slug]` read `searchParams.year` and are dynamic — every request hits the DB. Archive views are query-param variants of the same routes, not separate pages.
+- Score submission: POST /api/scores → validates player IDs exist → DB insert → `revalidatePath("/", "/leaderboard", "/statistics", "/players", "/players/{slug}")`. Archive views are dynamic so don't need extra revalidation regardless of which season the score belongs to.
+- `players.is_active` boolean (default `true`) gates whether a player appears in the Input Score picker; inactive players keep their historical scores and remain visible when an archived year is selected. Admins toggle via the edit form from `/admin/players`. Schema: `integer("is_active", { mode: "boolean" }).notNull().default(true)`
+- `players.is_commissioner` boolean (default `false`) marks the current commissioner; toggled via the edit form. Schema: `integer("is_commissioner", { mode: "boolean" }).notNull().default(false)`. The commissioner receives a gold **C** circle badge on every player-facing surface (leaderboard table, leaderboard mobile cards, player directory, player profile header). When the page renders the active season, the server queries DB for `is_commissioner = true`; when it renders an archived year (`?year=2024` etc.), it looks up `SEASON_COMMISSIONERS` constant (`src/lib/constants.ts`) which maps `{ 2025: "nico-paoletti", 2024: "kevin-slack", 2023: "blair-watson" }`. All components that show the badge accept a `commissionerSlug?: string` prop — never hardcode a slug in components.
 - **Self-serve player creation**: `/scores` step 3 has a dashed green "Can't find your name? Add a new player" button below the picker; opens a Dialog → POST `/api/players` (public, no auth) with `{ name }` → server forces `isSocial: true, isActive: true`, returns `{id, name}`; new player auto-selected in the form. `score-form.tsx` owns the players list in `useState` so additions appear immediately. `/api/players` POST revalidates `/scores` and `/admin/players`
 - Score form: 5-step wizard (Date → Course → Players → Scores → Review); tee box set per player in step 3; step-tee.tsx is unused dead code
 - Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
@@ -57,26 +57,21 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 
 - Season is **derived from `roundDate`** (no schema column) — `YYYY-%` LIKE predicate via `seasonWhereClause(year)` in `src/lib/season.ts`
 - `ACTIVE_SEASON` constant (default **2026**, overridable via `process.env.ACTIVE_SEASON`); `ARCHIVED_SEASONS = [2025, 2024, 2023]`
+- `resolveSeasonParam(raw)` in `src/lib/season.ts` validates a `searchParams.year` value and returns either `ACTIVE_SEASON` (when missing/invalid) or one of the archived years. All four pages that take `?year=` use this helper for consistent validation — invalid years silently fall back to live.
 - Every exported function in `src/lib/stats.ts` accepts an optional `season?: number` (default `ACTIVE_SEASON`): `getLeaderboardData`, `getPlayerProfile`, `getPlayerHistory`, `getScoreTrends`, `getCourseBreakdowns`, `getScoreDistribution`, `getLeagueSummary`, `getPlayersWithStats`
 - `getLeaderboardData` excludes 0-GP rows (historical-only players don't appear on seasons where they didn't play); `getPlayersWithStats` also filters `gp > 0`
-- `getActivePlayerSlugs(season)` returns slugs with at least one score that season — used by `/players/[slug]` 404 check and by archive `generateStaticParams`
-- Archive routes mirror live pages under `/seasons/[year]/*`:
-  - `/seasons/[year]` — leaderboard (landing)
-  - `/seasons/[year]/statistics`
-  - `/seasons/[year]/players`
-  - `/seasons/[year]/players/[slug]`
-  - Shared `/seasons/[year]/layout.tsx` adds sticky amber banner (`sticky top-16 z-40`, sits below `h-16` main header): thin amber gradient accent line at top + two-row mobile layout (row 1: archive icon + "{year} Season Archive" left / "← Live season" right; row 2: `ArchiveNavPills` left / season switcher right) + single-row desktop layout (`md:flex-row`); validates year via `notFound()` if not in `ARCHIVED_SEASONS`
-  - `ArchiveNavPills` (`src/components/seasons/archive-nav-pills.tsx`) is a client component using `useSelectedLayoutSegment()`; active section = solid filled chip (`bg-amber-800 text-white shadow-sm px-2.5 py-0.5`); inactive = bordered white pill (`border-amber-300 bg-white/80 px-2.5 py-0.5`); "Statistics" abbreviates to "Stats" on mobile (`sm:hidden`/`hidden sm:inline`) to keep row 2 on one line; archive pages have no separate footer cross-nav
-  - `SeasonSwitcher` (`src/components/seasons/season-switcher.tsx`) is a native `<select>` styled as an amber pill; options display as "{year} Season" (capital S)
+- **Archive access is via query param, not a separate route tree.** `/leaderboard`, `/statistics`, `/players`, `/players/[slug]` each read `searchParams.year`. Live = no query param. Archive = `?year=2024` etc. There is no `/seasons/[year]/*` directory.
+- **`<YearDropdown />`** (`src/components/seasons/year-dropdown.tsx`) — `"use client"` native `<select>` styled as a green pill (matches primary brand). Reads current year from `useSearchParams().get("year")`, defaults to `ACTIVE_SEASON`. Options: `"2026 · Live"`, `"2025"`, `"2024"`, `"2023"`. On change: pushes `pathname` (when selected = ACTIVE_SEASON, drops the query string entirely) or `${pathname}?year=${year}`. Used on all four pages, sits to the right of the page heading via `relative` parent + `absolute inset-y-0 right-0` positioning so the centered Dancing Script title isn't shifted.
+- Title text stays static across years ("Leaderboard", "Statistics", "The Players", `<player name>`) — the year is only conveyed through the dropdown. Don't render `2024 Statistics` etc.
+- `/players/[slug]` is dynamic (no `generateStaticParams`, no `revalidate = 300`). 404 only when `getPlayerProfile(slug, season) === null` (player slug doesn't exist anywhere). When the player exists but `gp === 0` for the selected year, `PlayerProfileClient` renders a dashed-border empty-state card ("No rounds played in this season. Use the year selector above to view another season.") in place of charts/tables. Header (avatar + name + dropdown) still renders.
 - Component props for reusability:
-  - `LeaderboardTable` / `LeaderboardCard`: `playerHrefPrefix?: string` (default `/players`), `commissionerSlug?: string`
-  - `PlayerCard`: `hrefPrefix?: string` (default `/players`), `commissionerSlug?: string`
-  - `StatisticsClient`: `titleOverride?`, `playersHref?`, `archivedSeasons?` (when set on the live stats page, shows "Browse Archive" → `/seasons/2025/statistics` + "Our History" → `/history` pills at the bottom)
-  - `PlayerProfileClient`: `seasonLabel?`, `backHref?`, `commissionerSlug?: string`
-- `/players/[slug]` 404s if active-season `gp === 0` (historical-only players reachable only via archive route)
-- Score mutation routes revalidate based on the score's year: live paths if `season === ACTIVE_SEASON`, else archive paths (admin PUT that moves a score between seasons revalidates both old and new)
+  - `LeaderboardTable` / `LeaderboardCard`: `playerHrefSuffix?: string` (default `""`) — appended after `/players/{slug}`, e.g. `?year=2024`. Plus `commissionerSlug?: string`.
+  - `PlayerCard`: `hrefSuffix?: string` (default `""`), `commissionerSlug?: string`.
+  - `StatisticsClient`: only `playersHref?: string` (default `/players`). Heading, divider, and bottom archive/history pills now live in the page (`statistics/page.tsx`), not the client component. Component is body-only.
+  - `PlayerProfileClient`: `backHref?: string`, `commissionerSlug?: string`. Embeds `<YearDropdown />` in its header row. Does not accept or render a season label — title is the player name regardless of year.
+- Score mutation routes (`/api/scores`, `/api/admin/scores/[id]`): always revalidate the live ISR-eligible paths (`/`, `/leaderboard`, `/statistics`, `/players`, `/players/{slug}`). Archive views are dynamic so don't need explicit revalidation — they always render fresh.
 - Import pipeline: `scripts/import-past-data.ts` reads 2023/2024 sheets from `Past Data.xlsx`, normalizes Meadows N/E/S/W → North/East/South/West, resolves short names via per-sheet J/K alias column map, coerces out-of-year dates to the sheet's year, recomputes handicap via `calculateHandicapDiff()`, and is idempotent (deletes existing `LIKE '2023-%' OR '2024-%'` rows before re-inserting). `(Social)` suffix in alias column K sets `isSocial: true`
-- `/history` **Past Season Links**: all 7 year pills (2025–2019) are external — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024/2023/2022/2021/2020/2019 → respective Google Sheets (bordered pill with `ExternalLink` icon, `target="_blank"`); below the pills, a long "Browse Archive" pill → `/seasons/2025` (internal archive entry point)
+- `/history` **Past Season Links**: all 7 year pills (2025–2019) are external — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024/2023/2022/2021/2020/2019 → respective Google Sheets (bordered pill with `ExternalLink` icon, `target="_blank"`). The internal archive is reached via the per-page year dropdown — no "Browse Archive" pill on `/history` or anywhere else.
 
 ## Admin
 
@@ -110,15 +105,14 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
   ```
   The pulled file is gitignored but ALWAYS delete it when done.
 - **Schema migrations to Turso**: `drizzle-kit push` doesn't load `.env.local`, and pushing silently can diverge dev from prod. Use ad-hoc idempotent `@libsql/client` scripts that PRAGMA-check before altering — `scripts/migrate-add-is-active.ts` is the canonical pattern (reads `PRAGMA table_info(<table>)`, no-ops if the column is already there, safe to re-run). Dev + prod must both get the migration; forgetting prod = build failure (`SQL_INPUT_ERROR: no such column: ...`)
-- **Prerender-before-data gotcha**: `/seasons/[year]/*` uses `generateStaticParams` + `revalidate = 300`, so archive HTML is baked at build time against whatever Turso has AT THE MOMENT the build runs. If you push code → build completes → *then* import data, archive pages stay empty until a fresh rebuild. After any data import against prod, push an empty commit (`git commit --allow-empty -m "trigger rebuild"`) so Vercel re-prerenders
+- **Archive pages are dynamic**, so the old "prerender-before-data" gotcha no longer bites for `?year=` views — they always render against fresh DB state. The homepage `/` is still ISR (5-min revalidate); after data imports it picks up automatically on the next revalidation tick.
 - **Canonical deployment order for schema-changing + data-importing releases**:
   1. Run the ALTER TABLE migration against prod Turso (pulled env + idempotent script)
   2. `git push` — Vercel build will now find the schema it expects
   3. Wait for build READY
   4. Run the data import against prod Turso (`TURSO_*= npm run db:import-past`)
-  5. `git commit --allow-empty -m "trigger rebuild" && git push` — re-prerenders archive pages with the imported data
-  6. Delete the pulled env file
-- Verify prod data landed with a direct curl probe before assuming ISR caught up: `curl -sL https://ottawasuperleague.vip/seasons/2024 | grep -oE "Kevin Slack|No rounds recorded"` — the latter string means the HTML still has the empty-state baked in
+  5. Delete the pulled env file
+- Verify prod data landed with a direct curl probe: `curl -sL "https://ottawasuperleague.vip/leaderboard?year=2024" | grep -oE "Kevin Slack|hasn't started yet"` — presence of the latter means the import didn't land or the env var pointed elsewhere
 
 ## Security
 
@@ -165,16 +159,15 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Statistics Page Design
 
-- Server page fetches `getScoreTrends()` (includes `course` field) + `getCourseBreakdowns()`, passes to `StatisticsClient`
-- Heading: "Statistics" in Dancing Script + green decorative divider
-- `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter
+- Server page (`statistics/page.tsx`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getScoreTrends(season)` + `getCourseBreakdowns(season)`, renders heading row (`<h1>Statistics</h1>` + `<YearDropdown />`) + green divider + `<StatisticsClient />` body + footer "Our History" pill
+- Heading lives in the page, not the client component — `StatisticsClient` is body-only and starts at the course filter pills
+- `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter; props are just `{ trends, courseBreakdowns, playersHref }`
 - Course filter pills: `All | North | East | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
 - Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
-- Player profiles CTA (compact single-row card, `py-2.5`, `mb-6`) appears after summary cards, links to `/players`
-- Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note → archive navigation
+- Player profiles CTA (compact single-row card, `py-2.5`, `mb-6`) appears after summary cards, links to `playersHref` (`/players` for live, `/players?year=YYYY` for archive)
+- Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note. The "Our History" pill below the body lives in the page wrapper.
 - Footer note: styled box (`rounded-lg border bg-muted/40 px-4 py-3`) with bolded "course filters at the top"
-- After footer note: live page shows two pills side-by-side — "Browse Archive" (Archive icon) → `/seasons/2025/statistics` + "Our History" (BookOpen icon) → `/history`. Archive pages have no footer cross-nav (handled by `ArchiveNavPills` in the banner)
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
 - Course Breakdown: 4 tiles (2x2 → 4-col), sorted easiest→hardest by avg score; shows avg score + best round + total rounds; visible on "All" only
 - Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Score Trends Y-axis
@@ -246,7 +239,7 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Route: `/history`
 - Static page (no DB) — all champion data hardcoded in `page.tsx`
 - Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
-- **Past Season Links** (immediately below heading/divider): "Past Season Links" muted caption + pill grid 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries are all external `<a target="_blank">` to original Google resources (bordered pill with `ExternalLink` icon) — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024–2019 → their respective Google Sheets. Below the pill grid: long "Browse Archive" pill (Archive icon) → `/seasons/2025` for entry into the internal season archive
+- **Past Season Links** (immediately below heading/divider): "Past Season Links" muted caption + pill grid 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries are all external `<a target="_blank">` to original Google resources (bordered pill with `ExternalLink` icon) — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024–2019 → their respective Google Sheets. The internal archive is reached via the year dropdown on `/leaderboard`, `/statistics`, `/players` — no Browse Archive pill on this page.
 - Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
 - `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift
@@ -261,19 +254,24 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 - Sort: alphabetical (`a.name.localeCompare(b.name)`)
 - Grid: 2-col mobile / 3-col sm / 4-col lg; `gap-3`
 - `PlayerCard`: portrait profile tile (`h-full`, `shadow-md hover:shadow-lg`, `relative`)
-  - Social badge: `absolute top-2 right-2 z-10`, gray style (`border-gray-300 bg-gray-100 text-gray-600`), compact (`px-1 py-px text-[11px]`); Commissioner badge: same position, golden circle (`h-5 w-5 rounded-full bg-yellow-400 text-white font-bold`) for slug="nico-paoletti" only
+  - Social badge: `absolute top-2 right-2 z-10`, gray style (`border-gray-300 bg-gray-100 text-gray-600`), compact (`px-1 py-px text-[11px]`); Commissioner badge: same position, outlined gold circle (`h-5 w-5 rounded-full border-2 border-yellow-400 text-yellow-500`) when `slug === commissionerSlug` (the prop, not a hardcoded slug). C badge takes priority over Social.
   - Avatar: `h-20 w-20` rounded-full with `ring-2 ring-primary/20`; profile photo or green initials (`text-xl font-bold`)
   - Name: `text-base font-semibold` centered below avatar
   - Stats strip (border-t): GP · Avg · Hdcp · Rank — plain uniform text, no color coding; unranked shows "—"
   - No rounds: "No rounds played" in muted text
-- ISR 5-min revalidation
+  - `hrefSuffix` prop (default `""`) is appended to `/players/{slug}` so archive views link to `/players/{slug}?year=YYYY`
+- Page is dynamic (reads `searchParams.year`); not ISR
 
 ## Player Profile Design
 
-- Server page (`/players/[slug]`) fetches `getPlayerProfile()` + `getPlayerHistory()`, passes to `PlayerProfileClient`
-- `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state
-- Back button: orange chevron (`border-2 border-orange-400`, `rounded-2xl`, `h-16 w-9`) inline with avatar; uses `router.back()` with fallback to `/players`
+- Server page (`/players/[slug]`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getPlayerProfile(slug, season)` + `getPlayerHistory(slug, season)`, passes to `PlayerProfileClient`. Resolves `commissionerSlug` from DB (live) or `SEASON_COMMISSIONERS[season]` (archive). `backHref` = `/players` (live) or `/players?year={season}` (archive).
+- 404 only when `getPlayerProfile` returns `null` (slug missing entirely). Player exists but `gp === 0` for the selected year → render empty-state card, never 404.
+- Page is dynamic — no `generateStaticParams`, no `revalidate`
+- `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state; embeds `<YearDropdown />` in the header row
+- Header row (flex): orange chevron back button → avatar → name+badges+rank → `<YearDropdown />` (right-aligned via `shrink-0` on a wrapper div)
+- Back button: orange chevron (`border-2 border-orange-400`, `rounded-2xl`, `h-16 w-9`); uses `router.back()` with fallback to `backHref` prop
 - Avatar: `h-16 w-16` rounded-full with `ring-2 ring-primary/20`; shows `profile.photoUrl` via `<Image>` (`object-cover object-top`) when available, falls back to green initials
+- Empty state (rendered when `profile.gp === 0`): dashed-border `Card` with muted background, "No rounds played in this season." headline + "Use the year selector above to view another season." subtext. Replaces all body sections (course pills, summary cards, charts, round history). Header still renders so the user can switch years.
 - Course filter pills: `All | North | East | West | South` — same style as statistics page
 - Summary cards (3-col mobile / 6-col desktop): Avg · Hdcp · Best (green) · Worst (red) · Win% · W-L-T — all recompute from `filteredHistory` when course is selected
 - Section order: Score History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table
@@ -301,12 +299,12 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Leaderboard Page Design
 
-- Route: `/leaderboard`
-- Heading: "Leaderboard" in Dancing Script font (`style={{ fontFamily: "var(--font-dancing-script)" }}`)
+- Route: `/leaderboard` (live) and `/leaderboard?year=YYYY` (archive — same page)
+- Heading: "Leaderboard" in Dancing Script font (`style={{ fontFamily: "var(--font-dancing-script)" }}`); inside a `relative` wrapper with `<YearDropdown />` absolutely positioned right
 - Decorative divider below heading: 3-part flex row — gradient line (transparent→primary/60) · solid pill (`h-1 w-12 rounded-full bg-primary`) · gradient line (primary/60→transparent) — same pattern reused on Statistics and Players pages
-- Desktop: `LeaderboardTable`; Mobile: `LeaderboardCard` list
-- ISR 5-min revalidation (`export const revalidate = 300`)
-- Footer hints (below table/cards): muted text with User icon → "Click a player name to view their individual statistics"; pill link → `/statistics` "View full league statistics" (`rounded-full border border-primary/30 bg-primary/5`)
+- Desktop: `LeaderboardTable`; Mobile: `LeaderboardCard` list. Both accept `playerHrefSuffix` from the page so player links carry the active `?year=` when archived.
+- Page is dynamic (reads `searchParams.year`); not ISR
+- Footer hints (below table/cards): muted text with User icon → "Click a player name to view their individual statistics"; pill link → `/statistics` (or `/statistics?year=YYYY`) "View full league statistics" + "Our History" pill → `/history`
 
 ## Footer
 

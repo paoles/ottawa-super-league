@@ -6,7 +6,6 @@ import { eq, inArray } from "drizzle-orm";
 import { scoreSubmissionSchema } from "@/lib/validations";
 import { calculateHandicapDiff } from "@/lib/handicap";
 import type { Course, Tee } from "@/lib/constants";
-import { ACTIVE_SEASON, isArchivedSeason } from "@/lib/season";
 
 export async function POST(request: Request) {
   try {
@@ -63,25 +62,14 @@ export async function POST(request: Request) {
       inserted.push(result[0].id);
     }
 
-    // Revalidate affected pages
-    const season = parseInt(roundDate.slice(0, 4), 10);
-    const isArchive = season !== ACTIVE_SEASON && isArchivedSeason(season);
-
-    if (!isArchive) {
-      revalidatePath("/");
-      revalidatePath("/leaderboard");
-      revalidatePath("/statistics");
-      revalidatePath("/players");
-      for (const p of existingPlayers) {
-        revalidatePath(`/players/${p.slug}`);
-      }
-    } else {
-      revalidatePath(`/seasons/${season}`);
-      revalidatePath(`/seasons/${season}/statistics`);
-      revalidatePath(`/seasons/${season}/players`);
-      for (const p of existingPlayers) {
-        revalidatePath(`/seasons/${season}/players/${p.slug}`);
-      }
+    // Revalidate live (no-query-param) ISR pages. Archive views read
+    // searchParams and render dynamically, so no extra paths needed.
+    revalidatePath("/");
+    revalidatePath("/leaderboard");
+    revalidatePath("/statistics");
+    revalidatePath("/players");
+    for (const p of existingPlayers) {
+      revalidatePath(`/players/${p.slug}`);
     }
 
     return NextResponse.json({ success: true, inserted: inserted.length });
