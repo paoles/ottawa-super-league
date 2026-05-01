@@ -117,9 +117,9 @@ export default function HistoryPage() {
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/60" />
       </div>
 
-      {/* Past Season Links */}
+      {/* Data Archive Links */}
       <div className="text-center">
-        <p className="mb-2.5 text-xs font-medium text-muted-foreground">Past Season Links</p>
+        <p className="mb-2.5 text-xs font-medium text-muted-foreground">Data Archive Links</p>
         <div className="flex flex-col items-center gap-2">
           {[PAST_SEASONS.slice(0, 4), PAST_SEASONS.slice(4)].map((row, i) => (
             <div key={i} className="flex gap-2">
