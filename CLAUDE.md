@@ -50,6 +50,7 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 - Score page heading: Dancing Script `text-4xl font-bold text-primary` + green decorative divider; stepper uses `React.Fragment` with `h-0.5 flex-1` connector lines between circles (gray=upcoming, green=completed)
 - Per-player tee: stored in FormData as Map<number, Tee>; API payload includes tee per player entry
 - Score step: suggestions (avg±2 buttons) shown before entry; −/+ buttons shown after entry; handicap hidden (review only)
+- Score success screen: two buttons — **"Same Players, New Course"** (primary, keeps `selectedPlayers` + `tees` + `roundDate`, clears `course` + `scores`, jumps to step 2 — for back nine) and **"Submit More Scores"** (outline, full reset to step 1)
 - Course tile order: North/East top row, West/South bottom row
 - Route groups: public pages in `src/app/(public)/` (Header/Footer layout), admin in `src/app/admin/` (AdminNav layout)
 

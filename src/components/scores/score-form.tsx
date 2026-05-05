@@ -109,6 +109,18 @@ export function ScoreForm({ players: initialPlayers }: ScoreFormProps) {
     setSubmitted(false);
   }
 
+  function handleResetSamePlayers() {
+    setFormData((d) => ({
+      roundDate: d.roundDate,
+      selectedPlayers: d.selectedPlayers,
+      tees: d.tees,
+      course: null,
+      scores: new Map(),
+    }));
+    setStep(2);
+    setSubmitted(false);
+  }
+
   if (submitted) {
     return (
       <Card>
@@ -120,9 +132,14 @@ export function ScoreForm({ players: initialPlayers }: ScoreFormProps) {
           <p className="text-sm text-muted-foreground">
             The leaderboard will update shortly.
           </p>
-          <Button onClick={handleReset} className="mt-2">
-            Submit More Scores
-          </Button>
+          <div className="mt-2 flex w-full flex-col gap-2">
+            <Button onClick={handleResetSamePlayers} className="w-full">
+              Same Players, New Course
+            </Button>
+            <Button variant="outline" onClick={handleReset} className="w-full">
+              Submit More Scores
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
