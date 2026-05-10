@@ -53,6 +53,29 @@ export async function getLeagueYearlyAverages(): Promise<YearlyAverage[]> {
   );
 }
 
+export type TopRound = {
+  playerName: string;
+  course: string;
+  date: string;
+  score: number;
+};
+
+export async function getTopRoundsAllTime(limit: number = 5): Promise<TopRound[]> {
+  const rows = await db
+    .select({
+      playerName: players.name,
+      course: scores.course,
+      date: scores.roundDate,
+      score: scores.score,
+    })
+    .from(scores)
+    .innerJoin(players, eq(scores.playerId, players.id))
+    .orderBy(asc(scores.score), asc(scores.roundDate))
+    .limit(limit);
+
+  return rows;
+}
+
 export async function getPlayerYearlyAverages(slug: string): Promise<YearlyAverage[]> {
   const rows = await db
     .select({

@@ -8,13 +8,14 @@ import { YearlyAveragesChart } from "@/components/charts/yearly-averages-chart";
 
 import Link from "next/link";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
-import type { YearlyAverage } from "@/lib/stats";
+import type { YearlyAverage, TopRound } from "@/lib/stats";
 import { COURSES } from "@/lib/constants";
 
 interface StatisticsClientProps {
   trends: ScoreTrendPoint[];
   courseBreakdowns: CourseBreakdown[];
   yearlyAverages: YearlyAverage[];
+  allTimeTopRounds: TopRound[];
   selectedYear: number;
   playersHref?: string;
 }
@@ -55,6 +56,7 @@ export function StatisticsClient({
   trends,
   courseBreakdowns,
   yearlyAverages,
+  allTimeTopRounds,
   selectedYear,
   playersHref = "/players",
 }: StatisticsClientProps) {
@@ -239,11 +241,22 @@ export function StatisticsClient({
         </CardContent>
       </Card>
 
-      {/* Top 5 Best Rounds */}
+      {/* Season Averages by Year */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
+        </CardContent>
+      </Card>
+
+      {/* Top 5 Best Rounds \u2014 selected season */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-lg font-medium">
-            Top 5 Best Rounds{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : ""}
+            Top 5 Best Rounds &mdash; {selectedYear}
+            {selectedCourse !== "All" ? ` \u00b7 ${selectedCourse}` : ""}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -288,13 +301,52 @@ export function StatisticsClient({
         </CardContent>
       </Card>
 
-      {/* Season Averages by Year */}
+      {/* Top 5 Best Rounds \u2014 all time */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+          <CardTitle className="text-lg font-medium">Top 5 Best Rounds &mdash; All Time</CardTitle>
         </CardHeader>
-        <CardContent>
-          <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-muted-foreground">
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">#</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">Player</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">Course</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">Date</th>
+                  <th className="px-4 py-2 text-right text-xs font-medium uppercase tracking-wide">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allTimeTopRounds.map((r, i) => (
+                  <tr key={`alltime-${r.playerName}-${r.date}-${r.score}`} className="border-b last:border-0 hover:bg-muted/50">
+                    <td className="px-4 py-2 text-muted-foreground">{i + 1}</td>
+                    <td className="px-4 py-2 font-medium">{r.playerName}</td>
+                    <td className="px-4 py-2">
+                      <span
+                        className="text-xs font-medium"
+                        style={{ color: COURSE_COLORS[r.course] }}
+                      >
+                        {r.course}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {new Date(r.date + "T00:00:00").toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                    </td>
+                    <td className="px-4 py-2 text-right font-semibold text-green-600">{r.score}</td>
+                  </tr>
+                ))}
+                {allTimeTopRounds.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
+                      No rounds recorded yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 

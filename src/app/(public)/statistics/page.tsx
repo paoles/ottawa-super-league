@@ -2,7 +2,7 @@ import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { StatisticsClient } from "@/components/statistics/statistics-client";
 import { YearDropdown } from "@/components/seasons/year-dropdown";
-import { getScoreTrends, getCourseBreakdowns, getLeagueYearlyAverages } from "@/lib/stats";
+import { getScoreTrends, getCourseBreakdowns, getLeagueYearlyAverages, getTopRoundsAllTime } from "@/lib/stats";
 import { ACTIVE_SEASON, resolveSeasonParam } from "@/lib/season";
 import type { Metadata } from "next";
 
@@ -18,10 +18,11 @@ export default async function StatisticsPage({
   const { year } = await searchParams;
   const season = resolveSeasonParam(year);
 
-  const [trends, courseBreakdowns, yearlyAverages] = await Promise.all([
+  const [trends, courseBreakdowns, yearlyAverages, allTimeTopRounds] = await Promise.all([
     getScoreTrends(season),
     getCourseBreakdowns(season),
     getLeagueYearlyAverages(),
+    getTopRoundsAllTime(5),
   ]);
 
   const playersHref = season === ACTIVE_SEASON ? "/players" : `/players?year=${season}`;
@@ -49,6 +50,7 @@ export default async function StatisticsPage({
         trends={trends}
         courseBreakdowns={courseBreakdowns}
         yearlyAverages={yearlyAverages}
+        allTimeTopRounds={allTimeTopRounds}
         selectedYear={season}
         playersHref={playersHref}
       />

@@ -302,6 +302,16 @@ export function PlayerProfileClient({
             </CardContent>
           </Card>
 
+          {/* Season Averages by Year */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
+            </CardContent>
+          </Card>
+
           {/* Round History (sortable) */}
           <Card>
             <CardHeader>
@@ -360,16 +370,6 @@ export function PlayerProfileClient({
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Season Averages by Year */}
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
             </CardContent>
           </Card>
         </>
