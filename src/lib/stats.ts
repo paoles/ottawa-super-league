@@ -76,6 +76,26 @@ export async function getTopRoundsAllTime(limit: number = 5): Promise<TopRound[]
   return rows;
 }
 
+export async function getPlayerTopRoundsAllTime(
+  slug: string,
+  limit: number = 5
+): Promise<TopRound[]> {
+  const rows = await db
+    .select({
+      playerName: players.name,
+      course: scores.course,
+      date: scores.roundDate,
+      score: scores.score,
+    })
+    .from(scores)
+    .innerJoin(players, eq(scores.playerId, players.id))
+    .where(eq(players.slug, slug))
+    .orderBy(asc(scores.score), asc(scores.roundDate))
+    .limit(limit);
+
+  return rows;
+}
+
 export async function getPlayerYearlyAverages(slug: string): Promise<YearlyAverage[]> {
   const rows = await db
     .select({

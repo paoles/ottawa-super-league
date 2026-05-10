@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PlayerProfileClient } from "@/components/players/player-profile-client";
-import { getPlayerProfile, getPlayerHistory, getPlayerYearlyAverages } from "@/lib/stats";
+import { getPlayerProfile, getPlayerHistory, getPlayerYearlyAverages, getPlayerTopRoundsAllTime } from "@/lib/stats";
 import { db } from "@/lib/db";
 import { players } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -30,10 +30,11 @@ export default async function PlayerProfilePage({
   const [{ slug }, { year }] = await Promise.all([params, searchParams]);
   const season = resolveSeasonParam(year);
 
-  const [profile, history, yearlyAverages] = await Promise.all([
+  const [profile, history, yearlyAverages, allTimeTopRounds] = await Promise.all([
     getPlayerProfile(slug, season),
     getPlayerHistory(slug, season),
     getPlayerYearlyAverages(slug),
+    getPlayerTopRoundsAllTime(slug, 5),
   ]);
 
   if (!profile) notFound();
@@ -57,6 +58,7 @@ export default async function PlayerProfilePage({
       profile={profile}
       history={history}
       yearlyAverages={yearlyAverages}
+      allTimeTopRounds={allTimeTopRounds}
       selectedYear={season}
       backHref={backHref}
       commissionerSlug={commissionerSlug}
