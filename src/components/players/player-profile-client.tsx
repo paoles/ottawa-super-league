@@ -7,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayerHistoryChart } from "./player-history-chart";
 import { DistributionChart } from "@/components/statistics/distribution-chart";
+import { YearlyAveragesChart } from "@/components/charts/yearly-averages-chart";
 import { YearDropdown } from "@/components/seasons/year-dropdown";
 import type { PlayerProfile, PlayerRound, DistributionBucket } from "@/types";
+import type { YearlyAverage } from "@/lib/stats";
 import { COURSES } from "@/lib/constants";
 
 const COURSE_COLORS: Record<string, string> = {
@@ -43,6 +45,8 @@ const SORT_LABELS: Record<SortKey, string> = {
 interface PlayerProfileClientProps {
   profile: PlayerProfile;
   history: PlayerRound[];
+  yearlyAverages: YearlyAverage[];
+  selectedYear: number;
   backHref?: string;
   commissionerSlug?: string;
 }
@@ -50,6 +54,8 @@ interface PlayerProfileClientProps {
 export function PlayerProfileClient({
   profile,
   history,
+  yearlyAverages,
+  selectedYear,
   backHref,
   commissionerSlug,
 }: PlayerProfileClientProps) {
@@ -167,14 +173,26 @@ export function PlayerProfileClient({
       </div>
 
       {profile.gp === 0 ? (
-        <Card className="border-dashed bg-muted/30">
-          <CardContent className="px-6 py-10 text-center">
-            <p className="text-base font-medium text-foreground">No rounds played in this season.</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Use the year selector above to view another season.
-            </p>
-          </CardContent>
-        </Card>
+        <>
+          <Card className="border-dashed bg-muted/30">
+            <CardContent className="px-6 py-10 text-center">
+              <p className="text-base font-medium text-foreground">No rounds played in this season.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Use the year selector above to view another season.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Season Averages by Year */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <>
           {/* Course filter pills */}
@@ -229,11 +247,11 @@ export function PlayerProfileClient({
             </div>
           )}
 
-          {/* Score History Chart */}
+          {/* Season History Chart */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg font-medium">
-                Score History
+                Season History
                 {selectedCourse !== "All" && (
                   <span className="ml-2 text-sm font-normal" style={{ color: COURSE_COLORS[selectedCourse] }}>
                     &mdash; {selectedCourse}
@@ -342,6 +360,16 @@ export function PlayerProfileClient({
                   </tbody>
                 </table>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Season Averages by Year */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
             </CardContent>
           </Card>
         </>

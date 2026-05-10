@@ -59,7 +59,8 @@ npx vercel env pull .env.vercel.production --environment=production  # Pull prod
 - Season is **derived from `roundDate`** (no schema column) — `YYYY-%` LIKE predicate via `seasonWhereClause(year)` in `src/lib/season.ts`
 - `ACTIVE_SEASON` constant (default **2026**, overridable via `process.env.ACTIVE_SEASON`); `ARCHIVED_SEASONS = [2025, 2024, 2023]`
 - `resolveSeasonParam(raw)` in `src/lib/season.ts` validates a `searchParams.year` value and returns either `ACTIVE_SEASON` (when missing/invalid) or one of the archived years. All four pages that take `?year=` use this helper for consistent validation — invalid years silently fall back to live.
-- Every exported function in `src/lib/stats.ts` accepts an optional `season?: number` (default `ACTIVE_SEASON`): `getLeaderboardData`, `getPlayerProfile`, `getPlayerHistory`, `getScoreTrends`, `getCourseBreakdowns`, `getScoreDistribution`, `getLeagueSummary`, `getPlayersWithStats`
+- Every season-scoped function in `src/lib/stats.ts` accepts an optional `season?: number` (default `ACTIVE_SEASON`): `getLeaderboardData`, `getPlayerProfile`, `getPlayerHistory`, `getScoreTrends`, `getCourseBreakdowns`, `getScoreDistribution`, `getLeagueSummary`, `getPlayersWithStats`
+- Cross-season aggregates (NOT season-scoped) live in the same file: `getLeagueYearlyAverages()` and `getPlayerYearlyAverages(slug)` both return `YearlyAverage[]` (`{ year, average: number | null, rounds }`) with one row per `KNOWN_SEASONS` entry (`[ACTIVE_SEASON, ...ARCHIVED_SEASONS]` sorted ascending). Years with no rounds get `average: null` so the chart's X-axis stays consistent across players. Implementation uses Drizzle `sql` aggregates: `CAST(substr(roundDate, 1, 4) AS INTEGER) AS year` + `AVG(score)` + `COUNT(*)` GROUP BY year. Player variant adds `.innerJoin(players, eq(scores.playerId, players.id)).where(eq(players.slug, slug))`. `YearlyAverage` type is exported from `src/lib/stats.ts` (not from `src/types/`).
 - `getLeaderboardData` excludes 0-GP rows (historical-only players don't appear on seasons where they didn't play); `getPlayersWithStats` also filters `gp > 0`
 - **Archive access is via query param, not a separate route tree.** `/leaderboard`, `/statistics`, `/players`, `/players/[slug]` each read `searchParams.year`. Live = no query param. Archive = `?year=2024` etc. There is no `/seasons/[year]/*` directory.
 - **`<YearDropdown />`** (`src/components/seasons/year-dropdown.tsx`) — `"use client"` minimal inline select: `appearance-none bg-transparent text-base font-semibold text-primary` with a `ChevronDown` icon overlaid via absolute positioning. No border or pill background. Options: `"2026"`, `"2025"`, `"2024"`, `"2023"` (no "· Live" suffix). On change: pushes `pathname` (when selected = ACTIVE_SEASON, drops the query string entirely) or `${pathname}?year=${year}`. Used on all four pages, sits to the right of the page heading via `relative` parent + `absolute inset-y-0 right-0 flex items-center translate-y-1` positioning so the centered Dancing Script title isn't shifted.
@@ -160,25 +161,26 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Statistics Page Design
 
-- Server page (`statistics/page.tsx`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getScoreTrends(season)` + `getCourseBreakdowns(season)`, renders heading row (`<h1>Statistics</h1>` + `<YearDropdown />`) + green divider + `<StatisticsClient />` body + footer "Our History" pill
+- Server page (`statistics/page.tsx`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getScoreTrends(season)` + `getCourseBreakdowns(season)` + `getLeagueYearlyAverages()` (NOT season-scoped — pulls all years), renders heading row (`<h1>Statistics</h1>` + `<YearDropdown />`) + green divider + `<StatisticsClient />` body + footer "Our History" pill
 - Heading lives in the page, not the client component — `StatisticsClient` is body-only and starts at the course filter pills
-- `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections react to the filter; props are just `{ trends, courseBreakdowns, playersHref }`
+- `StatisticsClient` is a `"use client"` component owning `selectedCourse` state; all sections except Season Averages by Year react to the course filter; props are `{ trends, courseBreakdowns, yearlyAverages, selectedYear, playersHref }`
 - Course filter pills: `All | North | East | West | South` — active pill uses course color or primary green for All
 - Course colors: North=#10b981 (emerald), South=#f43f5e (rose), East=#3b82f6 (blue), West=#f59e0b (amber) — matches score input form tiles
 - Summary cards (3-col mobile / 6-col desktop, `p-3`): Rounds · Avg Score · Best Round (green) · Worst Round (red) · Median · Active Players
 - Player profiles CTA (compact single-row card, `py-2.5`, `mb-6`) appears after summary cards, links to `playersHref` (`/players` for live, `/players?year=YYYY` for archive)
-- Section order: Score Trends → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → footer note. The "Our History" pill below the body lives in the page wrapper.
+- Section order: Season History → Course Breakdown (All only) → Score Distribution → Top 5 Best Rounds → Season Averages by Year → footer note. The "Our History" pill below the body lives in the page wrapper.
 - Footer note: styled box (`rounded-lg border bg-muted/40 px-4 py-3`) with bolded "course filters at the top"
 - Top 5 Best Rounds table: muted uppercase header, columns: # · Player · Course (color-coded) · Date · Score (green)
 - Course Breakdown: 4 tiles (2x2 → 4-col), sorted easiest→hardest by avg score; shows avg score + best round + total rounds; visible on "All" only
-- Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Score Trends Y-axis
-- Score Trends: responsive line chart, filtered by selected course; title updates to "Score Trends — East" etc.
+- Score Distribution: horizontal bar chart (layout="vertical"), score ranges on Y-axis (low/green at bottom, high/red at top); color-coded green→red per bucket; visually aligned with Season History Y-axis
+- Season History (renamed from "Score Trends"): responsive line chart of within-season league averages, filtered by selected course; title updates to "Season History — East" etc. (no suffix on "All")
   - All viewports: individual player lines (thin, mobile 55% / desktop 35% opacity) as background context + bold League Avg on top
   - Mobile: subtitle caption shown; no legend. Desktop: compact legend shown
   - Linear regression trendline on League Avg: dashed green line (strokeDasharray="6 3", 50% opacity)
   - Chart height: `h-[280px] sm:h-[400px]`; x-axis tick density adapts (~5 mobile, ~10 desktop)
   - `isMobile` detected via `useEffect` + `resize` listener
   - Chart margin: `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`
+- Season Averages by Year: cross-season `<YearlyAveragesChart />` (in `src/components/charts/`); always shows one bar per known season (2023–2026) regardless of `selectedCourse`; selected year rendered in solid `#186732`, others muted to `#18673259`. Bar values labeled on top via `<LabelList>`; tooltip reads `Avg X.X · N rounds` (or "No rounds played" when null). Y-axis domain computed from data (`[floor(min)-4, ceil(max)+2]`) so the smallest bar still has visible height. `average` is null for years with no rounds — Recharts skips the bar entirely, but the year label still appears on the X-axis. Card height `h-[220px] sm:h-[280px]`. The chart never filters by course — pure season-to-season comparison.
 - Section card titles: `text-lg font-medium`
 - `ScoreTrendPoint` type includes `course: string` to enable client-side filtering
 
@@ -265,22 +267,23 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 ## Player Profile Design
 
-- Server page (`/players/[slug]`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getPlayerProfile(slug, season)` + `getPlayerHistory(slug, season)`, passes to `PlayerProfileClient`. Resolves `commissionerSlug` from DB (live) or `SEASON_COMMISSIONERS[season]` (archive). `backHref` = `/players` (live) or `/players?year={season}` (archive).
+- Server page (`/players/[slug]`) reads `searchParams.year` via `resolveSeasonParam`, fetches `getPlayerProfile(slug, season)` + `getPlayerHistory(slug, season)` + `getPlayerYearlyAverages(slug)` (NOT season-scoped — pulls all years), passes to `PlayerProfileClient`. Resolves `commissionerSlug` from DB (live) or `SEASON_COMMISSIONERS[season]` (archive). `backHref` = `/players` (live) or `/players?year={season}` (archive).
 - 404 only when `getPlayerProfile` returns `null` (slug missing entirely). Player exists but `gp === 0` for the selected year → render empty-state card, never 404.
 - Page is dynamic — no `generateStaticParams`, no `revalidate`
-- `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state; embeds `<YearDropdown />` in the header row
+- `PlayerProfileClient` is a `"use client"` component owning `selectedCourse`, `sortKey`, `sortDir` state; embeds `<YearDropdown />` in the header row; props are `{ profile, history, yearlyAverages, selectedYear, backHref?, commissionerSlug? }`
 - Header row (flex): orange chevron back button → avatar → name+badges+rank → `<YearDropdown />` (right-aligned via `shrink-0` on a wrapper div)
 - Back button: orange chevron (`border-2 border-orange-400`, `rounded-2xl`, `h-16 w-9`); uses `router.back()` with fallback to `backHref` prop
 - Avatar: `h-16 w-16` rounded-full with `ring-2 ring-primary/20`; shows `profile.photoUrl` via `<Image>` (`object-cover object-top`) when available, falls back to green initials
-- Empty state (rendered when `profile.gp === 0`): dashed-border `Card` with muted background, "No rounds played in this season." headline + "Use the year selector above to view another season." subtext. Replaces all body sections (course pills, summary cards, charts, round history). Header still renders so the user can switch years.
+- Empty state (rendered when `profile.gp === 0`): dashed-border `Card` with muted background, "No rounds played in this season." headline + "Use the year selector above to view another season." subtext. Replaces season-scoped sections (course pills, summary cards, Season History chart, Course Breakdown, Score Distribution, Round History). The Season Averages by Year chart still renders below the empty-state card so historical context remains visible. Header always renders so the user can switch years.
 - Course filter pills: `All | North | East | West | South` — same style as statistics page
 - Summary cards (3-col mobile / 6-col desktop): Avg · Hdcp · Best (green) · Worst (red) · Win% · W-L-T — all recompute from `filteredHistory` when course is selected
-- Section order: Score History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table
-- Score History chart (`PlayerHistoryChart`): per-course background lines (thin, `connectNulls`, color-coded) + bold main line + dashed linear regression trendline (same color as main line, `strokeDasharray="6 3"`, 50% opacity); `isMobile` responsive; chart height `h-[280px] sm:h-[350px]`; chart margin `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`
+- Section order: Season History chart → Course Breakdown tiles (All only) → Score Distribution → Round History table → Season Averages by Year
+- Season History chart (renamed from "Score History"; `PlayerHistoryChart`): per-course background lines (thin, `connectNulls`, color-coded) + bold main line + dashed linear regression trendline (same color as main line, `strokeDasharray="6 3"`, 50% opacity); `isMobile` responsive; chart height `h-[280px] sm:h-[350px]`; chart margin `{left: -8, right: 20, bottom: -8}`; YAxis `width={30}`; tick fontSize `isMobile ? 11 : 13`. Title reads "Season History" with `— {Course}` suffix when a course pill is active.
   - "All" selected: main key = `"Score"` (avg of day's rounds), color = `#186732`; all course lines at 40–55% opacity
   - Course selected: main key = course name, color = course color; other course lines at 15% opacity
 - Course Breakdown tiles: same as statistics page (2×2 → 4-col, sorted by avg score, color-coded borders/labels, green best round); visible on "All" only
 - Score Distribution: reuses `DistributionChart`, computed from `filteredHistory`
+- Season Averages by Year: same `<YearlyAveragesChart />` component used on the statistics page, fed `getPlayerYearlyAverages(slug)`. Renders one bar per known season (2023–2026) with the player's per-year avg score; selected year highlighted in `#186732`, others muted. Renders in BOTH the empty-state and populated branches so a player who skipped the current season still shows their historical averages.
 - Section card titles: `text-lg font-medium`
 - Round History: sortable by any column (click header to sort, again to reverse; active column shows ↑/↓); columns: Date · Course (color-coded) · Tee · Score · Result; no Hdcp column
 

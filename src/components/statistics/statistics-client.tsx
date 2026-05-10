@@ -4,14 +4,18 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScoreTrendsChart } from "./score-trends-chart";
 import { DistributionChart } from "./distribution-chart";
+import { YearlyAveragesChart } from "@/components/charts/yearly-averages-chart";
 
 import Link from "next/link";
 import type { ScoreTrendPoint, CourseBreakdown, DistributionBucket } from "@/types";
+import type { YearlyAverage } from "@/lib/stats";
 import { COURSES } from "@/lib/constants";
 
 interface StatisticsClientProps {
   trends: ScoreTrendPoint[];
   courseBreakdowns: CourseBreakdown[];
+  yearlyAverages: YearlyAverage[];
+  selectedYear: number;
   playersHref?: string;
 }
 
@@ -50,6 +54,8 @@ function formatDate(dateStr: string): string {
 export function StatisticsClient({
   trends,
   courseBreakdowns,
+  yearlyAverages,
+  selectedYear,
   playersHref = "/players",
 }: StatisticsClientProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("All");
@@ -184,7 +190,7 @@ export function StatisticsClient({
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-lg font-medium">
-            Score Trends{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : " Over Time"}
+            Season History{selectedCourse !== "All" ? ` \u2014 ${selectedCourse}` : ""}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -279,6 +285,16 @@ export function StatisticsClient({
               </tbody>
             </table>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Season Averages by Year */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">Season Averages by Year</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
         </CardContent>
       </Card>
 

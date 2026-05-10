@@ -1,9 +1,9 @@
 import { db } from "./db";
 import { players, scores } from "./db/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, sql } from "drizzle-orm";
 import { computeWinLossTie } from "./win-loss";
 import { MIN_GAMES_FOR_RANK, COURSES } from "./constants";
-import { ACTIVE_SEASON, seasonWhereClause } from "./season";
+import { ACTIVE_SEASON, ARCHIVED_SEASONS, seasonWhereClause } from "./season";
 import type {
   LeaderboardRow,
   PlayerProfile,
@@ -13,6 +13,62 @@ import type {
   DistributionBucket,
   CourseStats,
 } from "@/types";
+
+export type YearlyAverage = {
+  year: number;
+  average: number | null;
+  rounds: number;
+};
+
+const KNOWN_SEASONS: readonly number[] = [ACTIVE_SEASON, ...ARCHIVED_SEASONS]
+  .slice()
+  .sort((a, b) => a - b);
+
+function mergeYearlyAverages(
+  rows: { year: number; average: number; rounds: number }[]
+): YearlyAverage[] {
+  const byYear = new Map(rows.map((r) => [r.year, r]));
+  return KNOWN_SEASONS.map((y) => {
+    const r = byYear.get(y);
+    return {
+      year: y,
+      average: r ? Math.round(r.average * 10) / 10 : null,
+      rounds: r ? r.rounds : 0,
+    };
+  });
+}
+
+export async function getLeagueYearlyAverages(): Promise<YearlyAverage[]> {
+  const rows = await db
+    .select({
+      year: sql<number>`CAST(substr(${scores.roundDate}, 1, 4) AS INTEGER)`.as("year"),
+      average: sql<number>`AVG(${scores.score})`,
+      rounds: sql<number>`COUNT(*)`,
+    })
+    .from(scores)
+    .groupBy(sql`year`);
+
+  return mergeYearlyAverages(
+    rows.map((r) => ({ year: Number(r.year), average: Number(r.average), rounds: Number(r.rounds) }))
+  );
+}
+
+export async function getPlayerYearlyAverages(slug: string): Promise<YearlyAverage[]> {
+  const rows = await db
+    .select({
+      year: sql<number>`CAST(substr(${scores.roundDate}, 1, 4) AS INTEGER)`.as("year"),
+      average: sql<number>`AVG(${scores.score})`,
+      rounds: sql<number>`COUNT(*)`,
+    })
+    .from(scores)
+    .innerJoin(players, eq(scores.playerId, players.id))
+    .where(eq(players.slug, slug))
+    .groupBy(sql`year`);
+
+  return mergeYearlyAverages(
+    rows.map((r) => ({ year: Number(r.year), average: Number(r.average), rounds: Number(r.rounds) }))
+  );
+}
 
 function median(values: number[]): number {
   if (values.length === 0) return 0;
