@@ -102,14 +102,6 @@ export function PlayerProfileClient({
     }));
   }, [filteredHistory]);
 
-  const seasonTopFive = useMemo(
-    () =>
-      [...filteredHistory]
-        .sort((a, b) => a.score - b.score || a.roundDate.localeCompare(b.roundDate))
-        .slice(0, 5),
-    [filteredHistory]
-  );
-
   const sortedHistory = useMemo(() => {
     return [...filteredHistory].sort((a, b) => {
       let cmp = 0;
@@ -319,51 +311,6 @@ export function PlayerProfileClient({
             </CardHeader>
             <CardContent>
               <YearlyAveragesChart data={yearlyAverages} selectedYear={selectedYear} />
-            </CardContent>
-          </Card>
-
-          {/* Top 5 Best Rounds — selected season */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-medium">
-                Top 5 Best Rounds &mdash; {selectedYear}
-                {selectedCourse !== "All" ? ` · ${selectedCourse}` : ""}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-muted-foreground">
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">#</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">Course</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide">Date</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium uppercase tracking-wide">Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {seasonTopFive.map((r, i) => (
-                      <tr key={`season-top-${r.id}`} className="border-b last:border-0 hover:bg-muted/50">
-                        <td className="px-4 py-2 text-muted-foreground">{i + 1}</td>
-                        <td className="px-4 py-2">
-                          <span className="text-xs font-medium" style={{ color: COURSE_COLORS[r.course] }}>{r.course}</span>
-                        </td>
-                        <td className="px-4 py-2 text-muted-foreground">
-                          {new Date(r.roundDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        </td>
-                        <td className="px-4 py-2 text-right font-semibold text-green-600">{r.score}</td>
-                      </tr>
-                    ))}
-                    {seasonTopFive.length === 0 && (
-                      <tr>
-                        <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">
-                          No rounds for this course.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
             </CardContent>
           </Card>
 
