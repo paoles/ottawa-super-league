@@ -247,9 +247,9 @@ Handicap formula: `(Score - CR) * 113 / Slope`
 
 - Route: `/history`
 - Static page (no DB) — all champion data hardcoded in `page.tsx`
-- Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces)
+- Winner images: `/public/winners/{tournament}/{year}.png` (URL-encoded: `%20` for spaces) — extension is per-entry in the data array, not assumed (e.g. O.S. Classic 2026 is `2026.jpeg`, not `.png`)
 - **Data Archive Links** (immediately below heading/divider): "Data Archive Links" muted caption + pill grid 2025–2019 in two rows (4 on top: 2025–2022, 3 on bottom: 2021–2019). `PAST_SEASONS` entries are all external `<a target="_blank">` to original Google resources (bordered pill with `ExternalLink` icon) — 2025 → `sites.google.com/view/ottawasuperleague/home`, 2024–2019 → their respective Google Sheets. The internal archive is reached via the year dropdown on `/leaderboard`, `/statistics`, `/players` — no Browse Archive pill on this page.
-- Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025)
+- Three sections: **Tour Champions** (2019–2025) · **M.Q. Invitational Champions** (2020–2025) · **O.S. Classic Champions** (2025–2026); O.S. Classic is a pairs event (`name` holds both players, e.g. "Ryan Woolcock & David Monk")
 - Section heading: Dancing Script `text-3xl font-bold text-foreground` (no green divider under sections)
 - `ChampionCard`: `rounded-2xl overflow-hidden`, square `aspect-square`, `next/image` with `fill object-cover object-top`; caption bar below with name (`text-sm font-semibold`) + year (`text-xs text-muted-foreground`); hover: `group-hover:scale-105` zoom + shadow lift
 - Grid: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4`; `mt-5` between heading and grid

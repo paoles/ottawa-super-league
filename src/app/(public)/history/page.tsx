@@ -33,6 +33,7 @@ const mqChampions = [
 ];
 
 const osChampions = [
+  { year: 2026, name: "Ryan Woolcock & David Monk", src: "/winners/os%20classic/2026.jpeg" },
   { year: 2025, name: "Kevin Slack & Peter Carniglia", src: "/winners/os%20classic/2025.png" },
 ];
 
