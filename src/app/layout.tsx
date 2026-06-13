@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto, Dancing_Script } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className={`${roboto.variable} ${dancingScript.variable} font-sans antialiased`}>
         {children}
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
